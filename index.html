@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EverStone Hub</title>
+<meta name="theme-color" content="#05061a">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EverStone">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05061a; --panel:rgba(17,19,48,.72); --panel2:rgba(26,28,68,.55); --line:rgba(132,120,255,.18); --line2:rgba(150,135,255,.35);
+  --text:#ecebff; --muted:#9b9dcb; --dim:#6d6f9c;
+  --a1:#4f7cff; --a2:#a855f7; --a3:#c084fc;
+  --good:#34d399; --warn:#fbbf24; --bad:#fb7185; --cyan:#38bdf8;
+  --grad:linear-gradient(90deg,#4f6bff,#9b4dff);
+}
+*{box-sizing:border-box}
+html,:root{color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:14.5px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(900px 520px at 88% -8%,rgba(124,58,237,.38),transparent 62%),
+   radial-gradient(760px 520px at -12% 28%,rgba(59,91,255,.24),transparent 60%),
+   radial-gradient(700px 420px at 55% 112%,rgba(168,85,247,.22),transparent 62%),
+   radial-gradient(rgba(140,130,255,.10) 1px,transparent 1.2px) 0 0/26px 26px;}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+
+/* ---------- Sidebar ---------- */
+.side{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--line);background:rgba(7,8,28,.62);backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-weight:800;font-size:15px;box-shadow:0 0 26px rgba(124,58,237,.6)}
+.brand b{display:block;font-size:15.5px;letter-spacing:-.01em}
+.brand small{color:var(--muted);font-size:11.5px}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav .sec{font-size:10.5px;letter-spacing:.24em;color:var(--dim);font-weight:700;padding:14px 12px 6px}
+.nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:600;transition:.15s}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.04)}
+.nav a.on{color:#fff;background:linear-gradient(90deg,rgba(79,124,255,.24),rgba(168,85,247,.12));box-shadow:inset 0 0 0 1px rgba(130,120,255,.38),0 0 24px rgba(124,58,237,.22)}
+.nav a.on svg{color:#b9a8ff;filter:drop-shadow(0 0 6px rgba(160,120,255,.8))}
+.nav .cnt{margin-left:auto;font-size:11px;background:rgba(251,113,133,.18);color:#ffb4c0;border-radius:99px;padding:1px 8px}
+.side-foot{margin-top:auto;font-size:11.5px;color:var(--dim);padding:0 10px}
+
+/* ---------- Main ---------- */
+main{padding:30px 34px 90px;width:100%;max-width:1320px;min-width:0}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.eyebrow{display:inline-block;letter-spacing:.42em;font-size:10.5px;font-weight:800;padding:5px 9px 5px 13px;border:1px solid rgba(160,140,255,.55);border-radius:6px;color:#dcd6ff;box-shadow:0 0 18px rgba(124,58,237,.35),inset 0 0 10px rgba(124,58,237,.2);text-transform:uppercase}
+h1.title{font-size:clamp(28px,4.2vw,44px);font-weight:800;letter-spacing:-.025em;margin:12px 0 4px;line-height:1.05}
+.grad{background:linear-gradient(90deg,#5b7cff,#8b5cf6 55%,#c98bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);margin:0}
+h2{font-size:16px;margin:0;font-weight:700;letter-spacing:-.01em}
+h3{font-size:14px;margin:0;font-weight:700}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);min-width:0}
+.card.glow{box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(130,110,255,.22),0 0 46px rgba(99,70,255,.16)}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.ch .muted{font-size:12.5px}
+.muted{color:var(--muted)} .dim{color:var(--dim)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sp{flex:1}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+.kpi{display:flex;gap:14px;align-items:center}
+.kpi .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:rgba(99,90,255,.14);border:1px solid var(--line2);color:#b7a6ff;box-shadow:0 0 20px rgba(124,58,237,.25);flex:none}
+.kpi .v{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .d{font-size:11.5px;margin-top:2px}
+.up{color:var(--good)} .bad{color:var(--bad)} .warnc{color:var(--warn)}
+
+/* Buttons & inputs */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:11px;border:1px solid var(--line2);background:rgba(255,255,255,.04);font-weight:650;cursor:pointer;white-space:nowrap;transition:.15s}
+.btn:hover{background:rgba(255,255,255,.08);border-color:rgba(170,150,255,.6)}
+.btn.primary{background:var(--grad);border-color:transparent;box-shadow:0 6px 24px rgba(124,58,237,.45)}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.sm{padding:6px 11px;font-size:12.5px;border-radius:9px}
+.btn.danger{border-color:rgba(251,113,133,.4);color:#ffb3c0}
+.ibtn{width:32px;height:32px;border-radius:9px;border:1px solid transparent;background:transparent;display:grid;place-items:center;color:var(--muted);cursor:pointer;flex:none}
+.ibtn:hover{background:rgba(255,255,255,.06);color:#fff;border-color:var(--line)}
+input,select,textarea{background:rgba(9,10,32,.85);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:rgba(150,120,255,.75);box-shadow:0 0 0 3px rgba(124,58,237,.22)}
+textarea{width:100%;resize:vertical;min-height:80px}
+select option{background:#14153a}
+
+/* pills/chips */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfd0f5;white-space:nowrap}
+.pill.p-blue{background:rgba(79,124,255,.15);border-color:rgba(79,124,255,.4);color:#b9c8ff}
+.pill.p-purple{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.45);color:#e0c4ff}
+.pill.p-green{background:rgba(52,211,153,.13);border-color:rgba(52,211,153,.4);color:#a8f0d3}
+.pill.p-amber{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:#fde19a}
+.pill.p-red{background:rgba(251,113,133,.13);border-color:rgba(251,113,133,.45);color:#ffb8c4}
+.pill.p-cyan{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);color:#b4e6ff}
+.pill.p-gray{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:9px;background:rgba(79,124,255,.12);border:1px solid rgba(110,130,255,.35);color:#c9d3ff}
+.chip:hover{background:rgba(79,124,255,.24);color:#fff}
+.chip.sms{background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.38);color:#e2c9ff}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer}
+.filters button.on{background:rgba(124,58,237,.22);border-color:rgba(160,130,255,.6);color:#fff;box-shadow:0 0 16px rgba(124,58,237,.3)}
+
+/* progress */
+.bar{height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#4f7cff,#b14cff);border-radius:99px;box-shadow:0 0 12px rgba(150,90,255,.7);transition:width .35s}
+.bar.warn>i{background:linear-gradient(90deg,#f59e0b,#fb7185)}
+.bar.thin{height:5px}
+.ring text{font-weight:800;fill:#fff}
+
+/* build cards */
+.bcard{display:flex;gap:16px;align-items:flex-start;transition:.18s}
+.bcard:hover{transform:translateY(-2px);border-color:var(--line2);box-shadow:0 14px 44px rgba(0,0,0,.4),0 0 36px rgba(110,80,255,.2)}
+.bcard .info{min-width:0;flex:1}
+.bcard .nm{font-weight:750;font-size:15.5px;letter-spacing:-.01em}
+.bcard .ad{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kv{display:flex;flex-wrap:wrap;gap:2px 6px;font-size:12.5px;margin-top:7px;color:var(--muted)}
+.kv b{color:var(--text);font-weight:600}
+
+/* checklist */
+.ckhead{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.phase{padding:0;overflow:hidden}
+.phase>header{display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;user-select:none}
+.phase>header:hover{background:rgba(255,255,255,.025)}
+.pnum{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:13px;background:rgba(99,90,255,.16);border:1px solid var(--line2);color:#c7b9ff;flex:none}
+.phase.complete .pnum{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 0 16px rgba(124,58,237,.5)}
+.phase .pt{flex:1;min-width:0}
+.phase .pt small{color:var(--muted);font-size:12px}
+.phase .pbar{width:120px}
+.chev{transition:.2s;color:var(--muted)}
+.phase.closed .chev{transform:rotate(-90deg)}
+.phase.closed .steps{display:none}
+.steps{border-top:1px solid var(--line)}
+.step{display:flex;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(130,120,255,.09);position:relative}
+.step:last-child{border-bottom:0}
+.step.done .stitle{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(160,150,255,.45)}
+.step.next{background:linear-gradient(90deg,rgba(124,58,237,.14),transparent 70%)}
+.step.next::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--grad);box-shadow:0 0 12px rgba(150,90,255,.9)}
+.sbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.stitle{font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nexttag{font-size:10.5px;letter-spacing:.14em;font-weight:800;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--grad);box-shadow:0 0 14px rgba(124,58,237,.55)}
+.snote-static{font-size:12.5px;color:var(--muted)}
+.srow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px}
+.datef{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-weight:600}
+.datef input{padding:5px 8px;font-size:12.5px}
+.datef.set input{border-color:rgba(79,124,255,.55);color:#cdd8ff}
+.linkbtn{background:none;border:0;color:var(--muted);cursor:pointer;font-weight:600;font-size:12.5px;padding:2px 0;display:inline-flex;gap:5px;align-items:center}
+.linkbtn:hover{color:#fff}
+.sugg{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#b4e6ff;border:1px solid rgba(56,189,248,.4);padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+
+/* checkbox */
+.cb{position:relative;display:inline-grid;flex:none;cursor:pointer;margin-top:1px}
+.cb input{position:absolute;opacity:0;width:0;height:0}
+.cb span{width:22px;height:22px;border-radius:7px;border:1.6px solid rgba(150,140,255,.55);display:grid;place-items:center;transition:.15s;background:rgba(9,10,32,.6)}
+.cb span::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.4px 2.4px 0;transform:rotate(45deg) translate(-1px,-1px) scale(0);transition:.15s}
+.cb input:checked+span{background:var(--grad);border-color:transparent;box-shadow:0 0 14px rgba(140,90,255,.7)}
+.cb input:checked+span::after{transform:rotate(45deg) translate(-1px,-1px) scale(1)}
+.cb input:focus-visible+span{box-shadow:0 0 0 3px rgba(124,58,237,.45)}
+
+/* tasks */
+.tbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:center}.tbar input[name=title]{grid-column:1/-1}.tbar>*{min-width:0;width:100%}
+.task{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;border:1px solid transparent;transition:.12s}
+.task:hover{background:rgba(255,255,255,.03);border-color:var(--line)}
+.task .tmain{flex:1;min-width:0}
+.task .ttitle{font-weight:620}
+.task.done .ttitle{color:var(--dim);text-decoration:line-through}
+.tmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.pdot{width:8px;height:8px;border-radius:50%;flex:none}
+.pdot.High{background:var(--bad);box-shadow:0 0 8px var(--bad)} .pdot.Med{background:var(--warn)} .pdot.Low{background:var(--cyan)}
+.tgroup{margin-top:6px}
+.tgroup>.gl{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--dim);padding:12px 12px 4px}
+.tgroup>.gl.bad{color:#ff9fb0}
+
+/* agenda */
+.ag{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:12px}
+.ag:hover{background:rgba(255,255,255,.03)}
+.dbox{width:50px;flex:none;text-align:center;border-radius:12px;padding:5px 0;background:rgba(99,90,255,.12);border:1px solid var(--line)}
+.dbox small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dbox b{font-size:18px;font-weight:800;line-height:1.1}
+.ag.over .dbox{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.4)}
+.ag .am{flex:1;min-width:0}
+.ag .at{font-weight:640;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag .as{font-size:12px;color:var(--muted)}
+
+/* tables & lists */
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+.dl div small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.dl div span{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid rgba(130,120,255,.08)}
+.empty{text-align:center;padding:34px 18px;color:var(--muted)}
+.empty .big{font-size:17px;color:var(--text);font-weight:700;margin-bottom:6px}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:600;font-size:13px;margin-bottom:10px}
+.back:hover{color:#fff}
+.lcard{display:flex;flex-direction:column;gap:10px;transition:.18s}
+.lcard:hover{transform:translateY(-2px);border-color:var(--line2)}
+.lcard .price{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.facts{display:flex;gap:14px;color:var(--muted);font-size:12.5px;flex-wrap:wrap}
+.facts b{color:var(--text)}
+.ccard{display:flex;flex-direction:column;gap:8px}
+.avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,rgba(79,124,255,.35),rgba(168,85,247,.35));border:1px solid var(--line2)}
+.banner{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:14px;border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08);margin-bottom:18px;font-size:13px}
+
+/* realtor */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;overflow-x:auto;padding-bottom:4px}
+.pcol{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:110px}
+.pcol h4{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:2px 4px 10px;display:flex;justify-content:space-between;font-weight:800}
+.pc{display:block;padding:10px 11px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);margin-bottom:8px;font-size:13px;transition:.15s}
+.pc:hover{border-color:var(--line2);box-shadow:0 0 18px rgba(110,80,255,.2)}
+.logf{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:8px}
+@media(max-width:560px){.logf{grid-template-columns:1fr auto}.logf input{grid-column:1/-1;order:-1}}
+.sw{position:relative;display:inline-block;width:44px;height:26px;flex:none}.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid var(--line2);transition:.2s;cursor:pointer}
+.sw span::after{content:"";position:absolute;width:20px;height:20px;left:2px;top:2px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked+span{background:var(--grad);border-color:transparent;box-shadow:0 0 14px rgba(140,90,255,.6)}.sw input:checked+span::after{transform:translateX(18px)}
+.setrow{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(130,120,255,.09)}.setrow:last-child{border-bottom:0}.setrow .sp b{display:block;font-weight:650}.setrow .sp small{color:var(--muted);font-size:12.5px}
+.steps-ol{margin:0;padding-left:20px;color:var(--muted);font-size:13px;display:grid;gap:6px}.steps-ol b{color:var(--text)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;word-break:break-all}
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(3,3,15,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mbox{width:min(640px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#0f1036;border:1px solid var(--line2);border-radius:20px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(110,70,255,.25)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 18px}
+.fgrid label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:650;color:var(--muted)}
+.fgrid label.full{grid-column:1/-1}
+.fgrid input,.fgrid select,.fgrid textarea{width:100%;min-width:0}
+#toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:#1a1b4a;border:1px solid var(--line2);padding:10px 16px;border-radius:12px;font-weight:600;transition:.25s;z-index:200;box-shadow:0 0 30px rgba(110,70,255,.35);pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%)}
+
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:sticky;top:0;padding-top:calc(10px + env(safe-area-inset-top,0px));z-index:30;height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:10px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{padding:0}.brand div{display:none}.logo{width:36px;height:36px}
+  .nav{flex-direction:row;overflow-x:auto;gap:2px;scrollbar-width:none;min-width:0;flex:1}
+  .nav::-webkit-scrollbar{display:none}
+  .nav .sec,.side-foot,.nav .cnt{display:none}
+  .nav a{flex-direction:column;gap:3px;padding:7px 10px;font-size:10.5px;flex:none}
+  main{padding:20px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .ckhead{grid-template-columns:1fr}
+  .phase .pbar{display:none}
+  .dl{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .kpis{gap:10px}.kpi .ic{display:none}.kpi .v{font-size:21px}
+  .tbar{grid-template-columns:1fr 1fr}
+  .ph .row{width:100%}.ph .row select{flex:1}
+  .fgrid{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .step{padding:13px 12px;gap:11px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f7cff"/><stop offset="1" stop-color="#c04bff"/></linearGradient></defs></svg>
+<div class="app">
+  <aside class="side">
+    <a class="brand" href="#dashboard"><span class="logo">ES</span><div><b>EverStone Hub</b><small>Builds · Real Estate</small></div></a>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot" id="syncState"></div>
+  </aside>
+  <main id="view"></main>
+</div>
+<div id="modal" class="modal" hidden></div>
+<div id="toast"></div>
+
+<script>
+/* ================= DATA DEFINITIONS ================= */
+const CONTACTS_SEED=[];
+
+/* badge types: time (purple), warn (amber), winter (blue), tip (green). d = has planned date field */
+const PHASES=[
+ {id:'p1',name:'Financing & Land Purchase',steps:[
+  {id:'f1',t:'Send loan details to the bank',note:'Lot price, construction price, and blueprints.'},
+  {id:'f2',t:'Get approved for the loan'},
+  {id:'f3',t:"Purchase builder's risk insurance",b:[['warn','Before closing & signing loan papers']]},
+  {id:'f4',t:'Purchase the lot'}]},
+ {id:'p2',name:'Site Planning & Permits',steps:[
+  {id:'s1',t:'Get the site plan',c:['c_joel']},
+  {id:'s2',t:'Get ResCheck and Manual J',c:['c_jed']},
+  {id:'s3',t:'Erosion-control snakes + house number sign out front',d:1},
+  {id:'s4',t:'Apply for permits'},
+  {id:'s5',t:'Contact for staking',d:1,b:[['time','After permits are applied for']]}]},
+ {id:'p3',name:'Early Vendor Contacts',sub:"Line these up anytime before they're needed",steps:[
+  {id:'v1',t:'Contact for cabinetry',c:['c_tedra'],d:1,b:[['tip','Anytime']]},
+  {id:'v2',t:'Contact for windows and front door',c:['c_mike'],d:1,note:'Always install a contractor door first — the real front door goes in at the very end.'}]},
+ {id:'p4',name:'Excavation & Foundation',steps:[
+  {id:'e1',t:'Contact for digging',c:['c_rick'],d:1,b:[['time','ASAP after staking']]},
+  {id:'e2',t:'Foundation quote & pour',c:['c_absolute'],d:1},
+  {id:'e3',t:'Plumbing quote & groundwork',c:['c_newera'],d:1,b:[['time','2 days after foundation pour — let it dry']]},
+  {id:'e4',t:'HVAC quote',c:['c_aspen']},
+  {id:'e5',t:'Contact for electric',c:['c_cruiser']},
+  {id:'e6',t:'Insulation, gutters & wire shelving',c:['c_jacob']},
+  {id:'e7',t:'Black tar, then pea gravel around the perimeter',c:['c_tucker'],d:1,b:[['time','ASAP']],note:'One load of pea gravel covers the perimeter after tar.'},
+  {id:'e8',t:'Pea gravel for plumbing groundwork (trench sewer)',c:['c_tucker'],d:1,b:[['time','After foundation, before the plumber']]},
+  {id:'e9',t:'City inspects foundation & tar',c:['c_city'],d:1}]},
+ {id:'p5',name:'Backfill & Flatwork',steps:[
+  {id:'b1',t:'Backfill the foundation',d:1,b:[['time','7 days after pour'],['winter','10 days in winter']]},
+  {id:'b2',t:'Crushed concrete where the driveway will be (1 load)',c:['c_tucker'],d:1,b:[['time','After backfill']]},
+  {id:'b3',t:'Two loads of pea gravel on the crushed concrete',c:['c_tucker'],d:1,note:'Flatwork company dumps pea gravel into the basement.'},
+  {id:'b4',t:'Flatwork for basement & garage',c:['c_jorge'],d:1,b:[['time','Contact while foundation is being done'],['winter',"Garage flatwork can't be done right away in winter"]]},
+  {id:'b5',t:'Order garage doors & motors',c:['c_steve'],d:1,b:[['time','After foundation is poured']],note:"Text a picture of one of Dad's garage doors, or go to their office."}]},
+ {id:'p6',name:'Framing',steps:[
+  {id:'fr1',t:'Framers start',d:1,b:[['time','Once concrete is dry — can start next day']]},
+  {id:'fr2',t:'Pick appliances & place the order',b:[['time','During framing']]},
+  {id:'fr3',t:'Deck post',c:['c_techno'],d:1,b:[['time','When framing is ~halfway']]},
+  {id:'fr4',t:'Fascia boards installed — contact the siding crew',d:1,b:[['warn','Must be done before roofing']]},
+  {id:'fr5',t:'Framing complete',d:1}]},
+ {id:'p7',name:'Roofing, Pest Control & Rough-In',steps:[
+  {id:'r1',t:'Roofing & shingles',d:1},
+  {id:'r2',t:'Pest control pre-treats the framing',d:1,b:[['warn','After windows & roofing, before insulation']]},
+  {id:'r3',t:'HVAC rough-in',c:['c_aspen'],d:1,b:[['time','As soon as framing is done — book 1–2 weeks out']]},
+  {id:'r4',t:'Plumbing rough-in',c:['c_newera'],d:1,b:[['time','Book 1–2 weeks out']]},
+  {id:'r5',t:'Electrical rough-in',c:['c_cruiser'],d:1,b:[['time','Book 1–2 weeks out']]}]},
+ {id:'p8',name:'Siding & Exterior',steps:[
+  {id:'x1',t:'Siding',d:1,b:[['tip','Can start right after framing — no need to wait for rough-in']]},
+  {id:'x2',t:'Pour the stoop',d:1,b:[['tip','Before or with siding (after is OK)']]},
+  {id:'x3',t:'Stone on the house',d:1,b:[['time','Once siding is done']]}]},
+ {id:'p9',name:'Inspections & Interior Rough-In',steps:[
+  {id:'i1',t:'City inspection — rough-in & framing',c:['c_city'],d:1,b:[['warn','Must pass before anything else proceeds']]},
+  {id:'i2',t:'Insulation',c:['c_jacob'],d:1,b:[['time','After rough-in is complete']]},
+  {id:'i3',t:'Drywall',d:1,b:[['time','Once insulation is done']]},
+  {id:'i4',t:'Measure rooms for carpet & tile',c:['c_ryan'],d:1}]},
+ {id:'p10',name:'Trim & Interior Finishing',steps:[
+  {id:'t1',t:'Garage doors installed',c:['c_steve'],d:1,b:[['warn','Before trim arrives — openers not needed yet']]},
+  {id:'t2',t:'Trim',d:1,b:[['time','Once drywall is up']]},
+  {id:'t3',t:'Tile work',d:1,b:[['tip','Same time as trim']]},
+  {id:'t4',t:'Bring in cabinets',c:['c_tedra'],d:1,b:[['time','When trim is starting']]},
+  {id:'t5',t:'Painter',d:1},
+  {id:'t6',t:'LVP flooring',c:['c_ryan','c_bryce'],d:1,b:[['time','During painting']],note:'Ryan or Bryce can install.'},
+  {id:'t7',t:'Order fixtures — lights, faucets, fans',b:[['time','During trim']]}]},
+ {id:'p11',name:'Closeout & Hand-off',suggested:1,sub:'Wrap-up steps I added — edit or skip any that don\'t fit',steps:[
+  {id:'z1',t:'Install the real front door',c:['c_mike'],d:1,note:'Swap out the contractor door.'},
+  {id:'z2',t:'Garage door openers installed',c:['c_steve'],d:1},
+  {id:'z3',t:'Final city inspection / occupancy',c:['c_city'],d:1},
+  {id:'z4',t:'Punch-list walkthrough',d:1},
+  {id:'z5',t:'Final clean',d:1},
+  {id:'z6',t:'Listing photos',d:1},
+  {id:'z7',t:'Create the listing in Real Estate',note:'Use “Create listing” on this build\'s page — address and specs carry over.'}]}
+];
+const ALL_STEPS=[];PHASES.forEach((p,pi)=>p.steps.forEach(s=>ALL_STEPS.push(Object.assign({},s,{phaseId:p.id,phaseName:p.name,pi}))));
+
+const TX=[
+ {name:'Listing prep',items:[
+  ['l1','Listing agreement signed'],['l2','Seller disclosures completed'],['l3','Professional photos scheduled'],['l4','Photos received'],
+  ['l5','MLS listing entered'],['l6','Yard sign & lockbox installed'],['l7','Added to company website'],['l8','Zillow link added'],['l9','Open house scheduled']]},
+ {name:'Under contract → closing',items:[
+  ['u1','Purchase agreement signed'],['u2','Earnest money received'],['u3','Inspection completed'],['u4','Inspection response / repairs agreed'],
+  ['u5','Appraisal completed'],['u6','Buyer financing cleared to close'],['u7','Abstract / title ordered'],['u8','Final walkthrough'],['u9','Closing scheduled'],['u10','Closed — keys handed over']]}
+];
+
+const BUILD_STATUS=['Pre-construction','Under construction','Finishing','Complete','Listed','Sold'];
+const LIST_STATUS=['Coming Soon','Active','Pending','Sold','Withdrawn'];
+const STATUS_COLOR={'Pre-construction':'p-cyan','Under construction':'p-purple','Finishing':'p-blue','Complete':'p-green','Listed':'p-amber','Sold':'p-green',
+ 'Coming Soon':'p-cyan','Active':'p-purple','Pending':'p-amber','Withdrawn':'p-gray',
+ 'Lead':'p-cyan','Nurture':'p-gray','Under contract':'p-amber','Closed':'p-green','Lost':'p-red'};
+const CLIENT_STAGES=['Lead','Nurture','Active','Under contract','Closed','Lost'];
+const CLIENT_TYPES=['Buyer','Seller','Buyer & Seller','Investor','Renter'];
+const SOURCES=['','Referral','Sphere / past client','Zillow','Realtor.com','Open house','Sign call','Website','Social media','EverStone buyer','Other'];
+const BADGE_CLASS={time:'p-purple',warn:'p-amber',winter:'p-cyan',tip:'p-green'};
+
+/* ================= STATE ================= */
+const LS='everstoneHub.v1';
+function seed(){return {builds:[],listings:[],tasks:[],clients:[],contacts:JSON.parse(JSON.stringify(CONTACTS_SEED)),ui:{collapsed:{},ckFilter:'all',taskFilter:'All',lsFilter:'All',schFilter:'All'},meta:{name:'Adis',gciGoal:'',defComm:'',defSplit:''}}}
+function migrate(o){const s=seed();o=Object.assign(s,o||{});['builds','listings','tasks','contacts','clients'].forEach(k=>{if(!Array.isArray(o[k]))o[k]=[]});
+ o.ui=Object.assign(seed().ui,o.ui||{});o.meta=Object.assign({name:'Adis'},o.meta||{});
+ o.builds.forEach(b=>{b.checks=b.checks||{};b.dates=b.dates||{};b.notesBy=b.notesBy||{};b.doneAt=b.doneAt||{};b.custom=b.custom||[];b.expenses=b.expenses||[]});
+ o.listings.forEach(l=>{l.tx=l.tx||{};l.showings=l.showings||[]});o.clients.forEach(c=>{c.log=c.log||[]});return o}
+function load(){try{const r=localStorage.getItem(LS);if(r)return migrate(JSON.parse(r))}catch(e){}return seed()}
+let STORAGE_OK=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(e){return false}})();
+let S=load();
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function save(){saveLocal();schedulePush()}
+/* Cloud sync + reminders: talks to your Cloudflare Worker */
+const CONN_KEY='everstoneHub.conn';
+let CONN=(()=>{try{return JSON.parse(localStorage.getItem(CONN_KEY)||'null')}catch(e){return null}})();
+const SYNC={state:CONN?'connecting':'local',version:0,dirty:false,timer:null,busy:false};
+function hasData(){return S.builds.length||S.listings.length||S.tasks.length||S.clients.length}
+function schedulePush(){if(!CONN)return;SYNC.dirty=true;clearTimeout(SYNC.timer);SYNC.timer=setTimeout(push,1200)}
+function api(path,opt={},conn=CONN){return fetch(conn.url.replace(/\/+$/,'')+path,Object.assign({},opt,{headers:{'Content-Type':'application/json','Authorization':'Bearer '+conn.key}}))
+ .then(async r=>{let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||('Error '+r.status));return j})}
+function payload(){const o={};['builds','listings','tasks','contacts','clients','meta'].forEach(k=>o[k]=S[k]);o.meta=Object.assign({},S.meta,{tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Chicago'});
+ try{o.agenda=agendaItems().filter(i=>i.kind!=='Task'&&days(TODAY(),i.date)<=31&&days(TODAY(),i.date)>=-1).map(i=>({date:i.date,title:i.title,sub:i.sub||'',kind:i.kind}))}catch(e){o.agenda=[]}return o}
+async function push(){if(!CONN)return;if(SYNC.busy){clearTimeout(SYNC.timer);SYNC.timer=setTimeout(push,800);return}SYNC.busy=true;SYNC.dirty=false;
+ try{const r=await api('/state',{method:'PUT',body:JSON.stringify({state:payload()})});SYNC.version=r.version;setSync('synced')}catch(e){SYNC.dirty=true;setSync('error')}finally{SYNC.busy=false}}
+const typing=()=>{const a=document.activeElement;return a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&!['checkbox','date','time','file'].includes(a.type)))};
+function applyRemote(st){const ui=S.ui;st=Object.assign({},st);delete st.agenda;S=migrate(Object.assign(st,{ui}));saveLocal()}
+async function pull(){if(!CONN||SYNC.busy||SYNC.dirty)return;try{const r=await api('/state');setSync('synced');
+ if(r.state&&r.version!==SYNC.version){SYNC.version=r.version;applyRemote(r.state);if(!typing()&&$('#modal').hidden)render()}else if(!r.state&&hasData())push()}catch(e){setSync('error')}}
+function setSync(st){if(SYNC.state===st)return;SYNC.state=st;syncBadge();if(ROUTE==='settings'&&!typing())render()}
+function syncBadge(){const el=document.getElementById('syncState');if(!el)return;
+ el.innerHTML={synced:'<span class="up">●</span> Synced',connecting:'Connecting…',error:'<span class="warnc">●</span> Offline — saved on this device',local:'Saved on this device only.<br><a href="#settings" style="color:#b9a8ff">Turn on sync & reminders</a>'}[SYNC.state]}
+function startSync(){syncBadge();if(!CONN)return;pull();setInterval(()=>{if(document.visibilityState==='visible')pull()},60000);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pull();else if(SYNC.dirty&&CONN){clearTimeout(SYNC.timer);push()}})}
+/* push notifications */
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const pushSupported=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+const b64uBytes=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s);return Uint8Array.from(b,c=>c.charCodeAt(0))};
+function deviceLabel(){const u=navigator.userAgent;return /iphone/i.test(u)?'iPhone':/ipad/i.test(u)?'iPad':/android/i.test(u)?'Android':/mac/i.test(u)?'Mac':/windows/i.test(u)?'Windows PC':'Device'}
+let PUSH_ON=false;
+async function checkPush(){try{if(!pushSupported())return;const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();const v=!!sub&&Notification.permission==='granted';if(v!==PUSH_ON){PUSH_ON=v;if(ROUTE==='settings')render()}}catch(e){}}
+
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(n===''||n==null||isNaN(+n))?'—':'$'+Math.round(+n).toLocaleString();
+const moneyK=n=>{n=+n||0;return n>=1e6?'$'+(n/1e6).toFixed(n>=1e7?1:2)+'M':n>=1e3?'$'+Math.round(n/1e3)+'K':'$'+n}
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const TODAY=()=>ymd(new Date());
+const pd=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const days=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+function fmt(s,long){if(!s)return '';const d=pd(s);const o={month:'short',day:'numeric'};if(long||d.getFullYear()!==new Date().getFullYear())o.year='numeric';return d.toLocaleDateString(undefined,o)}
+function rel(s){const n=days(TODAY(),s);if(n===0)return 'Today';if(n===1)return 'Tomorrow';if(n===-1)return 'Yesterday';if(n<0)return Math.abs(n)+'d overdue';if(n<7)return 'in '+n+'d';return fmt(s)}
+const getB=id=>S.builds.find(b=>b.id===id);
+const getL=id=>S.listings.find(l=>l.id===id);
+const getC=id=>S.contacts.find(c=>c.id===id);
+const getCl=id=>S.clients.find(c=>c.id===id);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}
+
+const IC={
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ briefcase:'<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ right:'<path d="m9 18 6-6-6-6"/>',
+ grid:'<rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/>',
+ home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ check:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/>',
+ tag:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+ list:'<path d="M10 6h11M10 12h11M10 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>',
+ cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6 6 0 0 1 3.5 6"/>',
+ db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>', trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>', phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>', msg:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+ chev:'<path d="m6 9 6 6 6-6"/>', left:'<path d="m15 18-6-6 6-6"/>', ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+ note:'<path d="M5 4h10l4 4v12H5z"/><path d="M9 12h6M9 16h4"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ dollar:'<path d="M12 2v20M17 6.5C17 4.6 14.8 3.5 12 3.5S7 4.8 7 7s2 3 5 3.5 5 1.4 5 3.8-2.2 3.7-5 3.7-5-1.2-5-3"/>',
+ alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.5"/>', bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+ down:'<path d="M12 4v12M6 11l6 6 6-6M4 20h16"/>', up:'<path d="M12 20V8M6 13l6-6 6 6M4 4h16"/>'
+};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
+function ring(p,size=64,sw=6,fs){const r=(size-sw)/2,c=2*Math.PI*r;fs=fs||Math.round(size*.24);
+ return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex:none;filter:drop-shadow(0 0 10px rgba(140,90,255,.45))"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${sw}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#gRing)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p)}" transform="rotate(-90 ${size/2} ${size/2})"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="${fs}">${Math.round(p*100)}%</text></svg>`}
+const bar=(p,cls='')=>`<div class="bar ${cls}"><i style="width:${Math.max(0,Math.min(100,p*100))}%"></i></div>`;
+const pill=(t,c)=>`<span class="pill ${c||STATUS_COLOR[t]||''}">${esc(t)}</span>`;
+
+/* ================= BUILD LOGIC ================= */
+function stepsOf(b){return ALL_STEPS.concat((b.custom||[]).map(c=>({id:c.id,t:c.t,d:1,custom:1,phaseId:'custom',phaseName:'Custom steps'})))}
+function progress(b){const st=stepsOf(b);const done=st.filter(s=>b.checks[s.id]).length;return {done,total:st.length,pct:st.length?done/st.length:0}}
+function nextStep(b){return stepsOf(b).find(s=>!b.checks[s.id])}
+function nextDated(b){return stepsOf(b).filter(s=>!b.checks[s.id]&&b.dates[s.id]).sort((x,y)=>b.dates[x.id]<b.dates[y.id]?-1:1)[0]}
+function buildSpent(b){return (b.expenses||[]).reduce((a,e)=>a+(+e.amount||0),0)}
+
+function agendaItems(){const out=[];const T=TODAY();
+ S.builds.forEach(b=>{stepsOf(b).forEach(s=>{const d=b.dates[s.id];if(d&&!b.checks[s.id])out.push({date:d,title:s.t,sub:b.name,kind:'Build',cls:'p-purple',href:'#checklist/'+b.id})});
+  if(b.targetDate&&!['Complete','Listed','Sold'].includes(b.status))out.push({date:b.targetDate,title:'Target completion',sub:b.name,kind:'Milestone',cls:'p-blue',href:'#build/'+b.id})});
+ S.listings.forEach(l=>{(l.showings||[]).forEach(sh=>{if(sh.date&&sh.date>=T)out.push({date:sh.date,title:(sh.type||'Showing')+(sh.who?' — '+sh.who:''),sub:l.address,kind:'Showing',cls:'p-amber',href:'#listing/'+l.id})});
+  if(l.status==='Pending'&&l.closeDate)out.push({date:l.closeDate,title:'Closing',sub:l.address,kind:'Closing',cls:'p-green',href:'#listing/'+l.id})});
+ S.clients.forEach(c=>{if(c.followUp&&!['Closed','Lost'].includes(c.stage))out.push({date:c.followUp,title:'Follow up — '+c.name,sub:(c.type||'Client')+' · '+c.stage,kind:'Follow-up',cls:'p-cyan',href:'#client/'+c.id})});
+ S.tasks.forEach(t=>{if(t.due&&!t.done)out.push({date:t.due,title:t.title,sub:linkName(t.link)||t.cat,kind:'Task',cls:t.cat==='EverStone'?'p-blue':'p-cyan',href:'#tasks',cat:t.cat})});
+ return out.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0)}
+function gcal(it){const d=it.date.replace(/-/g,'');const n=pd(it.date);n.setDate(n.getDate()+1);
+ return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(it.title+(it.sub?' — '+it.sub:''))+'&dates='+d+'/'+ymd(n).replace(/-/g,'')+'&details='+encodeURIComponent('From EverStone Hub ('+it.kind+')')}
+function agendaRow(it){const over=it.date<TODAY();const d=pd(it.date);
+ return `<div class="ag ${over?'over':''}"><div class="dbox"><small>${d.toLocaleDateString(undefined,{month:'short'})}</small><b>${d.getDate()}</b></div>
+ <a class="am" href="${it.href}"><div class="at">${esc(it.title)}</div><div class="as">${esc(it.sub||'')} · <span class="${over?'bad':''}">${rel(it.date)}</span></div></a>
+ ${pill(it.kind,it.cls)}<a class="ibtn" title="Add to Google Calendar" target="_blank" rel="noopener" href="${gcal(it)}">${ic('cal',16)}</a></div>`}
+
+/* ================= TASKS ================= */
+function linkName(link){if(!link)return '';const[t,id]=link.split(':');if(t==='build'){const b=getB(id);return b?b.name:''}if(t==='client'){const c=getCl(id);return c?c.name:''}const l=getL(id);return l?l.address:''}
+function linkHref(link){if(!link)return '';const[t,id]=link.split(':');return t==='build'?'#build/'+id:t==='client'?'#client/'+id:'#listing/'+id}
+function linkOptions(sel){let h='<option value="">No home linked</option>';
+ if(S.builds.length)h+='<optgroup label="EverStone builds">'+S.builds.map(b=>`<option value="build:${b.id}" ${sel==='build:'+b.id?'selected':''}>${esc(b.name)}</option>`).join('')+'</optgroup>';
+ if(S.listings.length)h+='<optgroup label="Real estate">'+S.listings.map(l=>`<option value="listing:${l.id}" ${sel==='listing:'+l.id?'selected':''}>${esc(l.address)}</option>`).join('')+'</optgroup>';
+ if(S.clients.length)h+='<optgroup label="Realtor clients">'+S.clients.map(c=>`<option value="client:${c.id}" ${sel==='client:'+c.id?'selected':''}>${esc(c.name)}</option>`).join('')+'</optgroup>';return h}
+function taskBar(pre={}){return `<form class="tbar" data-form="task">
+ <input name="title" placeholder="Add a task… e.g. Call Jorge about garage flatwork" required autocomplete="off">
+ <select name="cat" aria-label="Category">${['EverStone','Real Estate'].map(c=>`<option ${(pre.cat||'EverStone')===c?'selected':''}>${c}</option>`).join('')}</select>
+ <select name="link" data-ch="tlink" aria-label="Linked home">${linkOptions(pre.link)}</select>
+ <input type="date" name="due" aria-label="Due date">
+ <input type="time" name="time" aria-label="Reminder time" title="Reminder time (optional)">
+ <select name="pri" aria-label="Priority"><option value="High">High</option><option value="Med" selected>Medium</option><option value="Low">Low</option></select>
+ <button class="btn primary">${ic('plus',16)} Add</button></form>`}
+function taskRow(t,showLink=true){const over=t.due&&!t.done&&t.due<TODAY();const ln=linkName(t.link);
+ return `<div class="task ${t.done?'done':''}"><label class="cb"><input type="checkbox" data-ch="task" data-id="${t.id}" ${t.done?'checked':''} aria-label="Done"><span></span></label>
+ <span class="pdot ${t.pri||'Med'}" title="${t.pri==='Med'?'Medium':t.pri} priority"></span>
+ <div class="tmain"><div class="ttitle">${esc(t.title)}</div><div class="tmeta">${pill(t.cat,t.cat==='EverStone'?'p-blue':'p-cyan')}
+ ${showLink&&ln?`<a class="pill" href="${linkHref(t.link)}">${ic(t.link.startsWith('build')?'home':t.link.startsWith('client')?'user':'tag',12)} ${esc(ln)}</a>`:''}
+ ${t.due?`<span class="pill ${over?'p-red':''}">${ic('clock',12)} ${t.done?fmt(t.due):rel(t.due)}${t.time?' · '+fmtTime(t.time):''}</span>`:''}
+ ${t.notes?`<span class="pill p-gray" title="${esc(t.notes)}">${ic('note',12)} note</span>`:''}</div></div>
+ <button class="ibtn" data-act="editTask" data-id="${t.id}" title="Edit">${ic('edit',16)}</button><button class="ibtn" data-act="delTask" data-id="${t.id}" title="Delete">${ic('trash',16)}</button></div>`}
+const fmtTime=t=>{const[h,m]=String(t).split(':').map(Number);return new Date(2000,0,1,h||0,m||0).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})};
+function sortTasks(a){return a.slice().sort((x,y)=>{if(x.done!==y.done)return x.done?1:-1;const pr={High:0,Med:1,Low:2};
+ if((x.due||'9')!==(y.due||'9'))return (x.due||'9')<(y.due||'9')?-1:1;if((x.time||'99')!==(y.time||'99'))return (x.time||'99')<(y.time||'99')?-1:1;return pr[x.pri||'Med']-pr[y.pri||'Med']})}
+function taskList(list,emptyMsg){if(!list.length)return `<div class="empty">${emptyMsg||'Nothing here yet.'}</div>`;return sortTasks(list).map(t=>taskRow(t)).join('')}
+
+/* ================= PAGES ================= */
+function head(eb,t1,t2,sub,actions=''){return `<div class="ph"><div><span class="eyebrow">${eb}</span><h1 class="title">${t1} <span class="grad">${t2}</span></h1>${sub?`<p class="sub">${sub}</p>`:''}</div><div class="row">${actions}</div></div>`}
+function kpi(icon,v,l,d=''){return `<div class="card kpi"><div class="ic">${ic(icon,20)}</div><div><div class="v">${v}</div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:''}</div></div>`}
+
+function pgDashboard(){const T=TODAY();const h=new Date().getHours();const greet=h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,';
+ const col=(cat,label,icon)=>{const open=sortTasks(S.tasks.filter(t=>t.cat===cat&&!t.done));const over=open.filter(t=>t.due&&t.due<T).length;
+  return `<div class="card glow"><div class="ch"><h2 class="row" style="gap:8px">${ic(icon,18)} ${label}</h2><span class="muted">${open.length} open${over?` · <span class="bad">${over} overdue</span>`:''}</span></div>
+  ${open.length?open.map(t=>taskRow(t)).join(''):`<div class="empty" style="padding:22px">No upcoming ${label} tasks.</div>`}</div>`};
+ return head('Home',greet,esc(S.meta.name||'Adis'),new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}))
+ +`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px;align-items:start">${col('EverStone','EverStone','home')}${col('Real Estate','Realtor','briefcase')}</div>`}
+function dashBuild(b){const p=progress(b),n=nextStep(b),nd=nextDated(b);
+ return `<a class="card bcard" href="#build/${b.id}" style="padding:14px;background:var(--panel2)">${ring(p.pct,56,5)}<div class="info"><div class="row" style="gap:8px"><span class="nm">${esc(b.name)}</span>${pill(b.status)}</div>
+ <div class="kv">Up next: <b>${n?esc(n.t):'All steps done 🎉'}</b></div>${nd?`<div class="kv">${ic('cal',13)} <b>${esc(nd.t)}</b> · ${rel(b.dates[nd.id])}</div>`:''}</div></a>`}
+
+function pgBuilds(){
+ const f=S.ui.bFilter||'All';const list=S.builds.filter(b=>f==='All'||b.status===f);
+ const actives=S.builds.filter(b=>!['Complete','Listed','Sold'].includes(b.status));
+ const totBudget=actives.reduce((a,b)=>a+(+b.budget||0),0),totSpent=actives.reduce((a,b)=>a+buildSpent(b),0);
+ const evT=S.tasks.filter(t=>t.cat==='EverStone'&&!t.done);
+ return head('EverStone Homes','Build','Pipeline','Every home you\'re building, its progress, and what\'s next.',`<button class="btn primary" data-act="newBuild">${ic('plus',16)} New build</button>`)
+ +`<div class="kpis">${kpi('home',actives.length,'Active builds')}${kpi('check',S.builds.filter(b=>['Complete','Listed','Sold'].includes(b.status)).length,'Completed')}
+ ${kpi('dollar',moneyK(totBudget),'Active budgets',totBudget?`${moneyK(totSpent)} spent`:'')}${kpi('list',evT.length,'Open EverStone tasks')}</div>
+ <div class="filters" style="margin-bottom:16px">${['All',...BUILD_STATUS].map(s=>`<button class="${f===s?'on':''}" data-act="bFilter" data-v="${s}">${s}</button>`).join('')}</div>
+ ${list.length?`<div class="grid3">${list.map(b=>{const p=progress(b),n=nextStep(b),nd=nextDated(b);const cur=n?n.phaseName:'Done';
+  return `<a class="card bcard" href="#build/${b.id}">${ring(p.pct,72,6)}<div class="info"><div class="row" style="gap:8px;justify-content:space-between"><span class="nm">${esc(b.name)}</span>${pill(b.status)}</div>
+  <div class="ad">${esc(b.address||'No address yet')}${b.community?' · '+esc(b.community):''}</div>
+  <div class="kv">Phase: <b>${esc(cur)}</b></div><div class="kv">Next: <b>${n?esc(n.t):'—'}</b></div>
+  ${nd?`<div class="kv">${ic('cal',13)} ${esc(nd.t)} · <b>${rel(b.dates[nd.id])}</b></div>`:''}
+  ${b.startDate?`<div class="kv">${ic('clock',13)} Day <b>${Math.max(0,days(b.startDate,TODAY()))}</b>${b.targetDate?` · target ${fmt(b.targetDate)}`:''}</div>`:''}</div></a>`}).join('')}</div>`
+ :`<div class="card empty"><div class="big">${S.builds.length?'No builds with this status':'No builds yet'}</div>Each new build gets its own copy of your full checklist.<br><br><button class="btn primary" data-act="newBuild">${ic('plus',16)} New build</button></div>`}
+ <div class="card" style="margin-top:18px"><div class="ch"><h2>EverStone tasks</h2><span class="muted">${evT.length} open</span></div>${taskBar({cat:'EverStone'})}<div style="margin-top:10px">${taskList(S.tasks.filter(t=>t.cat==='EverStone'&&!t.done),'No open EverStone tasks.')}</div></div>`}
+
+function pgBuild(id){const b=getB(id);if(!b)return notFound('Build');
+ const p=progress(b),n=nextStep(b),spent=buildSpent(b),budget=+b.budget||0;
+ const up=stepsOf(b).filter(s=>b.dates[s.id]&&!b.checks[s.id]).sort((x,y)=>b.dates[x.id]<b.dates[y.id]?-1:1).slice(0,6);
+ const tasks=S.tasks.filter(t=>t.link==='build:'+b.id);
+ const linkedL=S.listings.find(l=>l.buildId===b.id);
+ return `<a class="back" href="#builds">${ic('left',16)} All builds</a>`
+ +head(esc(b.company||'EverStone Homes'),esc(b.name),'',`${esc(b.address||'')}${b.community?' · '+esc(b.community):''}`,
+  `${pill(b.status)}<button class="btn" data-act="editBuild" data-id="${b.id}">${ic('edit',16)} Edit</button>
+  ${linkedL?`<a class="btn" href="#listing/${linkedL.id}">${ic('tag',16)} View listing</a>`:`<button class="btn" data-act="listingFromBuild" data-id="${b.id}">${ic('tag',16)} Create listing</button>`}
+  <a class="btn primary" href="#checklist/${b.id}">${ic('check',16)} Open checklist</a>`)
+ +`<div class="grid2"><div class="stack">
+  <div class="card glow"><div class="row" style="gap:22px;align-items:center">${ring(p.pct,110,9)}<div class="sp" style="min-width:200px">
+   <div class="muted" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700">Current phase</div><div style="font-size:19px;font-weight:800;margin:2px 0 8px">${n?esc(n.phaseName):'Complete'}</div>
+   <div class="kv">Up next: <b>${n?esc(n.t):'All steps done'}</b></div><div class="kv">${p.done} of ${p.total} steps done</div>
+   ${b.startDate?`<div class="kv">Started ${fmt(b.startDate,1)} · day <b>${Math.max(0,days(b.startDate,TODAY()))}</b></div>`:''}
+   ${b.targetDate?`<div class="kv">Target ${fmt(b.targetDate,1)} · <b class="${b.targetDate<TODAY()?'bad':''}">${rel(b.targetDate)}</b></div>`:''}</div></div>
+   <div style="margin-top:16px">${PHASES.map(ph=>{const st=ph.steps;const dn=st.filter(s=>b.checks[s.id]).length;return `<div title="${esc(ph.name)}: ${dn}/${st.length}" style="display:inline-block;width:calc(${100/PHASES.length}% - 4px);margin-right:4px">${bar(dn/st.length,'thin')}</div>`}).join('')}
+   <div class="dim" style="font-size:11.5px;margin-top:6px">Phase-by-phase progress</div></div></div>
+  <div class="card"><div class="ch"><h2>Upcoming on this build</h2><a class="btn sm" href="#checklist/${b.id}">Set dates</a></div>
+   ${up.length?up.map(s=>agendaRow({date:b.dates[s.id],title:s.t,sub:s.phaseName,kind:'Build',cls:'p-purple',href:'#checklist/'+b.id})).join(''):'<div class="empty" style="padding:18px">No planned dates yet. Add them on the checklist so crews are scheduled.</div>'}</div>
+  <div class="card"><div class="ch"><h2>Budget & costs</h2><button class="btn sm" data-act="addExpense" data-id="${b.id}">${ic('plus',14)} Add cost</button></div>
+   <div class="dl" style="margin-bottom:14px"><div><small>Construction budget</small><span>${money(b.budget)}</span></div><div><small>Lot price</small><span>${money(b.lotPrice)}</span></div>
+   <div><small>Spent so far</small><span>${money(spent)}</span></div><div><small>Remaining</small><span class="${budget&&spent>budget?'bad':''}">${budget?money(budget-spent):'—'}</span></div></div>
+   ${budget?bar(spent/budget,spent/budget>.9?'warn':''):''}
+   ${b.expenses.length?`<table style="margin-top:12px"><tr><th>Date</th><th>Item</th><th>Vendor</th><th style="text-align:right">Amount</th><th></th></tr>${b.expenses.slice().sort((x,y)=>(y.date||'')<(x.date||'')?-1:1).map(e=>`<tr><td class="muted">${fmt(e.date)}</td><td>${esc(e.desc)}</td><td class="muted">${esc(e.vendor||'')}</td><td style="text-align:right;font-weight:650">${money(e.amount)}</td><td style="width:36px"><button class="ibtn" data-act="delExpense" data-id="${b.id}" data-e="${e.id}">${ic('trash',14)}</button></td></tr>`).join('')}</table>`:'<div class="dim" style="font-size:12.5px;margin-top:10px">Log draws, invoices and material costs to see where the budget stands.</div>'}</div>
+ </div><div class="stack">
+  <div class="card"><div class="ch"><h2>Details</h2></div><div class="dl">
+   ${[['Floor plan',b.plan],['Beds / baths',(b.beds||'—')+' / '+(b.baths||'—')],['Sq ft',b.sqft?(+b.sqft).toLocaleString():''],['Community',b.community],['Buyer',b.buyer||'Spec home'],['Company',b.company]].map(([k,v])=>`<div><small>${k}</small><span>${esc(v||'—')}</span></div>`).join('')}</div>
+   ${b.buyerPhone||b.buyerEmail?`<div class="row" style="margin-top:12px">${b.buyerPhone?`<a class="chip" href="tel:${esc(b.buyerPhone)}">${ic('phone',13)} Call buyer</a><a class="chip sms" href="sms:${esc(b.buyerPhone)}">${ic('msg',13)} Text</a>`:''}${b.buyerEmail?`<a class="chip" href="mailto:${esc(b.buyerEmail)}?subject=${encodeURIComponent((b.address||b.name)+' — build update')}">${ic('mail',13)} Email buyer</a>`:''}</div>`:''}</div>
+  <div class="card"><div class="ch"><h2>Tasks for this build</h2></div>${taskBar({cat:'EverStone',link:'build:'+b.id})}<div style="margin-top:10px">${taskList(tasks,'No tasks linked to this build.')}</div></div>
+  <div class="card"><div class="ch"><h2>Notes</h2><span class="dim" style="font-size:12px">Saves automatically</span></div><textarea data-ch="field" data-type="build" data-id="${b.id}" data-k="notes" rows="6" placeholder="Selections, change orders, lot details…">${esc(b.notes||'')}</textarea></div>
+  <button class="btn danger" data-act="delBuild" data-id="${b.id}" style="align-self:flex-start">${ic('trash',16)} Delete build</button>
+ </div></div>`}
+
+function pgChecklist(id){
+ if(!S.builds.length)return head('Build checklist','Step-by-step','Checklist','')+`<div class="card empty"><div class="big">Add a build first</div>Each home gets its own copy of the checklist with its own checkmarks and dates.<br><br><button class="btn primary" data-act="newBuild">${ic('plus',16)} New build</button></div>`;
+ const b=getB(id)||getB(S.ui.lastBuild)||S.builds[0];S.ui.lastBuild=b.id;
+ const f=S.ui.ckFilter||'all';const p=progress(b);const nx=nextStep(b);
+ const groups=PHASES.map((ph,i)=>({id:ph.id,num:i+1,name:ph.name,sub:ph.sub,suggested:ph.suggested,steps:ph.steps}));
+ if(b.custom.length)groups.push({id:'custom',num:'+',name:'Custom steps for this build',steps:b.custom.map(c=>({id:c.id,t:c.t,d:1,custom:1}))});
+ const vis=s=>f==='all'||(f==='remaining'&&!b.checks[s.id])||(f==='done'&&b.checks[s.id])||(f==='scheduled'&&b.dates[s.id]&&!b.checks[s.id]);
+ const subj=s=>encodeURIComponent((b.address||b.name)+' — '+s.t);
+ const html=groups.map(g=>{const st=g.steps.filter(vis);if(!st.length)return '';const dn=g.steps.filter(s=>b.checks[s.id]).length;const closed=S.ui.collapsed[g.id]&&f==='all';
+  return `<section class="card phase ${dn===g.steps.length?'complete':''} ${closed?'closed':''}"><header data-act="togglePhase" data-p="${g.id}"><span class="pnum">${g.num}</span>
+  <div class="pt"><h3>${esc(g.name)}${g.suggested?'<span class="sugg">Suggested</span>':''}</h3><small>${dn} of ${g.steps.length} done${g.sub?' · '+esc(g.sub):''}</small></div>
+  <div class="pbar">${bar(dn/g.steps.length,'thin')}</div><span class="chev">${ic('chev',18)}</span></header><div class="steps">
+  ${st.map(s=>{const done=!!b.checks[s.id],dt=b.dates[s.id]||'',nt=b.notesBy[s.id]||'';const isNext=nx&&nx.id===s.id;
+   return `<div class="step ${done?'done':''} ${isNext?'next':''}"><label class="cb"><input type="checkbox" data-ch="step" data-b="${b.id}" data-s="${s.id}" ${done?'checked':''} aria-label="Mark done"><span></span></label>
+   <div class="sbody"><div class="stitle">${esc(s.t)}${isNext?'<span class="nexttag">Up next</span>':''}</div>
+   ${s.b?`<div class="row" style="gap:6px">${s.b.map(([k,t])=>`<span class="pill ${BADGE_CLASS[k]}">${k==='winter'?'❄ ':''}${esc(t)}</span>`).join('')}</div>`:''}
+   ${s.note?`<div class="snote-static">${esc(s.note)}</div>`:''}
+   ${s.c?`<div class="row" style="gap:6px">${s.c.map(cid=>{const c=getC(cid);if(!c)return '';return (c.email?`<a class="chip" href="mailto:${esc(c.email)}?subject=${subj(s)}">${ic('mail',13)} ${esc(c.name)}</a>`:'')
+     +(c.phone?`<a class="chip" href="tel:${esc(c.phone)}">${ic('phone',13)} ${esc(c.name)} · ${esc(c.phone)}</a><a class="chip sms" href="sms:${esc(c.phone)}" title="Text ${esc(c.name)}">${ic('msg',13)} Text</a>`:'')
+     +(!c.email&&!c.phone?`<a class="chip" href="#contacts" title="Add contact info">${ic('users',13)} ${esc(c.name)} · add info</a>`:'')}).join('')}</div>`:''}
+   <div class="srow">${s.d?`<label class="datef ${dt?'set':''}">${ic('cal',14)} Planned <input type="date" data-ch="sdate" data-b="${b.id}" data-s="${s.id}" value="${dt}"></label>${dt&&!done?`<span class="${dt<TODAY()?'bad':'muted'}">${rel(dt)}</span>`:''}`:''}
+   <button class="linkbtn" data-act="noteToggle">${ic('note',14)} ${nt?'Note':'Add note'}</button>
+   ${done&&b.doneAt[s.id]?`<span class="dim">Done ${fmt(b.doneAt[s.id])}</span>`:''}
+   ${s.custom?`<button class="linkbtn" data-act="delCustom" data-b="${b.id}" data-s="${s.id}">${ic('trash',14)} Remove</button>`:''}</div>
+   <textarea data-ch="snote" data-b="${b.id}" data-s="${s.id}" rows="2" placeholder="Quote amount, who confirmed, gate code…" ${nt?'':'hidden'} style="min-height:56px">${esc(nt)}</textarea></div></div>`}).join('')}
+  </div></section>`}).join('');
+ return head('Build checklist','Step-by-step','Checklist','Check steps off, set planned dates for crews, and tap a contact to call, text or email.',
+  `<select data-ch="ckBuild" aria-label="Choose build" style="min-width:220px">${S.builds.map(x=>`<option value="${x.id}" ${x.id===b.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select>
+  <button class="btn" data-act="addCustom" data-id="${b.id}">${ic('plus',16)} Custom step</button>`)
+ +`<div class="card glow" style="margin-bottom:16px"><div class="ckhead">${ring(p.pct,88,8)}<div><div class="row" style="justify-content:space-between"><div><div style="font-size:19px;font-weight:800">${esc(b.name)}</div><div class="muted" style="font-size:13px">${esc(b.address||'')}</div></div><a class="btn sm" href="#build/${b.id}">Build details</a></div>
+ <div style="margin:12px 0 8px">${bar(p.pct)}</div><div class="row" style="justify-content:space-between"><span class="muted" style="font-size:13px">${p.done} of ${p.total} steps · ${nx?'Next: <b style="color:#fff">'+esc(nx.t)+'</b>':'All done'}</span>
+ <div class="filters">${[['all','All'],['remaining','Remaining'],['scheduled','Scheduled'],['done','Done']].map(([k,l])=>`<button class="${f===k?'on':''}" data-act="ckFilter" data-v="${k}">${l}</button>`).join('')}
+ ${f==='all'?`<button data-act="expandAll">Expand all</button><button data-act="collapseDone">Collapse done</button>`:''}</div></div></div></div></div>
+ <div class="stack" style="gap:12px">${html||'<div class="card empty">No steps match this filter.</div>'}</div>`}
+
+function domOf(l){if(!l.listDate)return 0;const end=(l.status==='Sold'&&l.closeDate)?l.closeDate:TODAY();return Math.max(0,days(l.listDate,end))}
+function pgRealEstate(){
+ const f=S.ui.lsFilter||'All';const yr=String(new Date().getFullYear());
+ const list=S.listings.filter(l=>f==='All'||l.status===f).sort((a,b)=>LIST_STATUS.indexOf(a.status)-LIST_STATUS.indexOf(b.status));
+ const active=S.listings.filter(l=>l.status==='Active'||l.status==='Coming Soon'),pend=S.listings.filter(l=>l.status==='Pending');
+ const sold=S.listings.filter(l=>l.status==='Sold'&&(l.closeDate||'').startsWith(yr));
+ const vol=sold.reduce((a,l)=>a+(+(l.soldPrice||l.price)||0),0);
+ const avgDom=active.filter(l=>l.listDate).length?Math.round(active.filter(l=>l.listDate).reduce((a,l)=>a+domOf(l),0)/active.filter(l=>l.listDate).length):0;
+ const reT=S.tasks.filter(t=>t.cat==='Real Estate'&&!t.done);
+ return head('Real estate','Listings &','Deals','Every home you\'re representing — details, showings, transaction steps and tasks.',`<button class="btn primary" data-act="newListing">${ic('plus',16)} New listing</button>`)
+ +`<div class="kpis">${kpi('tag',active.length,'Active / coming soon',avgDom?`avg ${avgDom} days on market`:'')}${kpi('clock',pend.length,'Pending',pend.length?moneyK(pend.reduce((a,l)=>a+(+l.price||0),0))+' under contract':'')}
+ ${kpi('dollar',moneyK(vol),'Closed volume '+yr,`${sold.length} closed`)}${kpi('list',reT.length,'Open real estate tasks')}</div>
+ <div class="filters" style="margin-bottom:16px">${['All',...LIST_STATUS].map(s=>`<button class="${f===s?'on':''}" data-act="lsFilter" data-v="${s}">${s}${s!=='All'?' '+S.listings.filter(l=>l.status===s).length:''}</button>`).join('')}</div>
+ ${list.length?`<div class="grid3">${list.map(l=>{const txd=TX.flatMap(g=>g.items).filter(([k])=>l.tx[k]).length,txt=TX.flatMap(g=>g.items).length;const nt=sortTasks(S.tasks.filter(t=>t.link==='listing:'+l.id&&!t.done))[0];
+  return `<a class="card lcard" href="#listing/${l.id}"><div class="row" style="justify-content:space-between"><span class="price">${money(l.price)}</span>${pill(l.status)}</div>
+  <div><div style="font-weight:700">${esc(l.address)}</div><div class="muted" style="font-size:12.5px">${esc(l.city||'')}${l.side?' · '+esc(l.side)+' side':''}</div></div>
+  <div class="facts"><span><b>${esc(l.beds||'—')}</b> bd</span><span><b>${esc(l.baths||'—')}</b> ba</span><span><b>${l.sqft?(+l.sqft).toLocaleString():'—'}</b> sqft</span>${l.listDate?`<span><b>${domOf(l)}</b> DOM</span>`:''}</div>
+  <div>${bar(txd/txt,'thin')}<div class="dim" style="font-size:11.5px;margin-top:5px">Transaction ${txd}/${txt}${l.client?' · '+esc(l.client):''}</div></div>
+  ${nt?`<div class="kv">${ic('list',13)} <b>${esc(nt.title)}</b>${nt.due?' · '+rel(nt.due):''}</div>`:''}</a>`}).join('')}</div>`
+ :`<div class="card empty"><div class="big">${S.listings.length?'No listings with this status':'No listings yet'}</div>Add a home to track its details, showings and closing steps.<br><br><button class="btn primary" data-act="newListing">${ic('plus',16)} New listing</button></div>`}
+ <div class="card" style="margin-top:18px"><div class="ch"><h2>Real estate tasks</h2><span class="muted">${reT.length} open</span></div>${taskBar({cat:'Real Estate'})}<div style="margin-top:10px">${taskList(S.tasks.filter(t=>t.cat==='Real Estate'&&!t.done),'No open real estate tasks.')}</div></div>`}
+
+function pgListing(id){const l=getL(id);if(!l)return notFound('Listing');
+ const rate=+l.commission||+S.meta.defComm||0;const price=+(l.soldPrice||l.price)||0;const tasks=S.tasks.filter(t=>t.link==='listing:'+l.id);const b=l.buildId&&getB(l.buildId);
+ const ppsf=l.sqft&&price?Math.round(price/l.sqft):0;
+ return `<a class="back" href="#realestate">${ic('left',16)} All listings</a>`
+ +head(esc(l.side?l.side+' side':'Listing'),esc(l.address),'',`${esc(l.city||'')}${l.mls?' · MLS #'+esc(l.mls):''}`,
+  `${pill(l.status)}${l.zillowUrl?`<a class="btn" target="_blank" rel="noopener" href="${esc(l.zillowUrl)}">${ic('ext',16)} Zillow</a>`:''}<button class="btn" data-act="editListing" data-id="${l.id}">${ic('edit',16)} Edit</button>`)
+ +`<div class="grid2"><div class="stack">
+ <div class="card glow"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><div class="muted" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700">${l.status==='Sold'?'Sold price':'List price'}</div>
+  <div style="font-size:34px;font-weight:800;letter-spacing:-.02em" class="grad">${money(l.status==='Sold'&&l.soldPrice?l.soldPrice:l.price)}</div>${ppsf?`<div class="muted" style="font-size:12.5px">$${ppsf}/sqft</div>`:''}</div>
+  <div style="text-align:right"><div class="muted" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700">Days on market</div><div style="font-size:28px;font-weight:800">${l.listDate?domOf(l):'—'}</div>${l.listDate?`<div class="muted" style="font-size:12.5px">Listed ${fmt(l.listDate,1)}</div>`:''}</div></div>
+  <div class="dl" style="margin-top:16px">${[['Beds',l.beds],['Baths',l.baths],['Sq ft',l.sqft?(+l.sqft).toLocaleString():''],['Year / type',l.ptype],['Closing date',l.closeDate?fmt(l.closeDate,1):''],['Est. commission (GCI)',rate&&price?money(gci(l))+` (${rate}%)`:'Set a rate in Edit'],['Your net',rate&&price?money(net(l)):'—']].map(([k,v])=>`<div><small>${k}</small><span>${esc(v||'—')}</span></div>`).join('')}</div>
+  ${b?`<div style="margin-top:14px"><a class="chip" href="#build/${b.id}">${ic('home',13)} Linked build: ${esc(b.name)} · ${Math.round(progress(b).pct*100)}%</a></div>`:''}</div>
+ <div class="card"><div class="ch"><h2>Transaction checklist</h2><span class="muted">${TX.flatMap(g=>g.items).filter(([k])=>l.tx[k]).length}/${TX.flatMap(g=>g.items).length}</span></div>
+  ${TX.map(g=>`<div class="tgroup"><div class="gl" style="padding-left:2px">${g.name}</div>${g.items.map(([k,t])=>`<label class="task ${l.tx[k]?'done':''}" style="cursor:pointer;padding:7px 4px"><span class="cb"><input type="checkbox" data-ch="tx" data-id="${l.id}" data-k="${k}" ${l.tx[k]?'checked':''}><span></span></span><span class="ttitle" style="flex:1">${t}</span>${l.tx[k]&&l.tx[k]!==true?`<span class="dim" style="font-size:12px">${fmt(l.tx[k])}</span>`:''}</label>`).join('')}</div>`).join('')}</div>
+ <div class="card"><div class="ch"><h2>Showings & open houses</h2><button class="btn sm" data-act="addShowing" data-id="${l.id}">${ic('plus',14)} Log</button></div>
+  ${l.showings.length?`<table><tr><th>Date</th><th>Type</th><th>Agent / buyer</th><th>Interest</th><th>Feedback</th><th></th></tr>${l.showings.slice().sort((a,b)=>(b.date||'')<(a.date||'')?-1:1).map(s=>`<tr><td class="muted" style="white-space:nowrap">${fmt(s.date)}</td><td>${esc(s.type||'Showing')}</td><td>${esc(s.who||'')}</td><td>${s.interest?pill(s.interest,s.interest==='High'?'p-green':s.interest==='Medium'?'p-amber':'p-gray'):''}</td><td class="muted">${esc(s.feedback||'')}</td><td style="width:36px"><button class="ibtn" data-act="delShowing" data-id="${l.id}" data-s="${s.id}">${ic('trash',14)}</button></td></tr>`).join('')}</table>`:'<div class="empty" style="padding:16px">No showings logged. Future showings appear on your schedule.</div>'}
+  ${l.showings.length?`<div class="dim" style="font-size:12px;margin-top:8px">${l.showings.length} total · ${l.showings.filter(s=>s.date>=TODAY()).length} upcoming</div>`:''}</div>
+ </div><div class="stack">
+ <div class="card"><div class="ch"><h2>Client</h2></div><div style="font-weight:700;font-size:15px">${esc(l.client||'No client added')}</div>${l.clientId&&getCl(l.clientId)?`<a class="chip" style="margin-top:8px" href="#client/${l.clientId}">${ic('user',13)} Open client profile</a>`:''}
+  <div class="row" style="margin-top:10px">${l.clientPhone?`<a class="chip" href="tel:${esc(l.clientPhone)}">${ic('phone',13)} ${esc(l.clientPhone)}</a><a class="chip sms" href="sms:${esc(l.clientPhone)}">${ic('msg',13)} Text</a>`:''}
+  ${l.clientEmail?`<a class="chip" href="mailto:${esc(l.clientEmail)}?subject=${encodeURIComponent(l.address)}">${ic('mail',13)} Email</a>`:''}${!l.clientPhone&&!l.clientEmail?'<span class="dim" style="font-size:12.5px">Add phone/email in Edit</span>':''}</div></div>
+ <div class="card"><div class="ch"><h2>Tasks for this home</h2></div>${taskBar({cat:'Real Estate',link:'listing:'+l.id})}<div style="margin-top:10px">${taskList(tasks,'No tasks linked to this home.')}</div></div>
+ <div class="card"><div class="ch"><h2>Notes</h2><span class="dim" style="font-size:12px">Saves automatically</span></div><textarea data-ch="field" data-type="listing" data-id="${l.id}" data-k="notes" rows="7" placeholder="Seller motivation, showing instructions, offers received…">${esc(l.notes||'')}</textarea></div>
+ <button class="btn danger" data-act="delListing" data-id="${l.id}" style="align-self:flex-start">${ic('trash',16)} Delete listing</button>
+ </div></div>`}
+
+function pgTasks(){const f=S.ui.taskFilter||'All';const T=TODAY();
+ const all=S.tasks.filter(t=>f==='All'||t.cat===f);const open=all.filter(t=>!t.done);
+ const g=[['Overdue',open.filter(t=>t.due&&t.due<T),'bad'],['Today',open.filter(t=>t.due===T)],['Next 7 days',open.filter(t=>t.due&&t.due>T&&days(T,t.due)<=7)],['Later',open.filter(t=>t.due&&days(T,t.due)>7)],['No due date',open.filter(t=>!t.due)]];
+ const done=all.filter(t=>t.done).sort((a,b)=>(b.doneAt||'')<(a.doneAt||'')?-1:1);
+ return head('Tasks','Everything','To Do','One list for EverStone and real estate. Link a task to a home and it shows up on that home\'s page too.')
+ +`<div class="card glow" style="margin-bottom:16px">${taskBar({cat:f==='Real Estate'?'Real Estate':'EverStone'})}</div>
+ <div class="row" style="margin-bottom:12px;justify-content:space-between"><div class="filters">${['All','EverStone','Real Estate'].map(c=>`<button class="${f===c?'on':''}" data-act="taskFilter" data-v="${c}">${c} ${S.tasks.filter(t=>!t.done&&(c==='All'||t.cat===c)).length}</button>`).join('')}</div>
+ ${done.length?`<button class="btn sm" data-act="clearDone">Clear ${done.length} completed</button>`:''}</div>
+ <div class="card">${open.length?g.filter(x=>x[1].length).map(([n,l,c])=>`<div class="tgroup"><div class="gl ${c||''}">${n} · ${l.length}</div>${sortTasks(l).map(t=>taskRow(t)).join('')}</div>`).join(''):'<div class="empty"><div class="big">All clear</div>No open tasks. Add one above.</div>'}
+ ${done.length?`<details style="margin-top:8px"><summary class="muted" style="cursor:pointer;padding:10px 12px;font-weight:650">Completed (${done.length})</summary>${done.slice(0,40).map(t=>taskRow(t)).join('')}</details>`:''}</div>`}
+
+function pgSchedule(){const f=S.ui.schFilter||'All';const T=TODAY();
+ let items=agendaItems().filter(i=>f==='All'||(f==='Builds'&&(i.kind==='Build'||i.kind==='Milestone'))||(f==='Real estate'&&['Showing','Closing','Follow-up'].includes(i.kind))||(f==='Tasks'&&i.kind==='Task'));
+ const over=items.filter(i=>i.date<T),fut=items.filter(i=>i.date>=T);const by={};fut.forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ return head('Schedule','Upcoming','Schedule','Planned crew dates, showings, closings and task due dates in one timeline. Tap the calendar icon to add any item to Google Calendar.')
+ +`<div class="filters" style="margin-bottom:16px">${['All','Builds','Real estate','Tasks'].map(s=>`<button class="${f===s?'on':''}" data-act="schFilter" data-v="${s}">${s}</button>`).join('')}</div>
+ ${over.length?`<div class="card" style="margin-bottom:16px;border-color:rgba(251,113,133,.35)"><div class="ch"><h2 class="bad">Past due · ${over.length}</h2><span class="muted">Check these off or reschedule</span></div>${over.map(agendaRow).join('')}</div>`:''}
+ <div class="card glow">${Object.keys(by).length?Object.entries(by).map(([d,l])=>`<div class="tgroup"><div class="gl">${pd(d).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})} · ${rel(d)}</div>${l.map(agendaRow).join('')}</div>`).join(''):'<div class="empty"><div class="big">Nothing upcoming</div>Set planned dates on checklist steps, due dates on tasks, or log future showings.</div>'}</div>`}
+
+function pgContacts(){
+ const used=id=>ALL_STEPS.filter(s=>(s.c||[]).includes(id)).length;
+ return head('Directory','Vendors &','Contacts','Your subs and suppliers. Edit here and the checklist call/email buttons update everywhere.',`<button class="btn primary" data-act="newContact">${ic('plus',16)} Add contact</button>`)
+ +`<div class="grid3">${S.contacts.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<div class="card ccard"><div class="row"><span class="avatar">${esc(c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())}</span><div class="sp" style="min-width:0"><div style="font-weight:700">${esc(c.name)}</div><div class="muted" style="font-size:12.5px">${esc([c.trade,c.company].filter(Boolean).join(' · '))}</div></div>
+ <button class="ibtn" data-act="editContact" data-id="${c.id}">${ic('edit',16)}</button></div>
+ <div class="row" style="gap:6px">${c.phone?`<a class="chip" href="tel:${esc(c.phone)}">${ic('phone',13)} ${esc(c.phone)}</a><a class="chip sms" href="sms:${esc(c.phone)}">${ic('msg',13)} Text</a>`:''}${c.email?`<a class="chip" href="mailto:${esc(c.email)}">${ic('mail',13)} ${esc(c.email)}</a>`:''}${!c.phone&&!c.email?'<span class="pill p-amber">Missing phone / email</span>':''}</div>
+ ${used(c.id)?`<div class="dim" style="font-size:12px">Used on ${used(c.id)} checklist step${used(c.id)>1?'s':''}</div>`:''}</div>`).join('')}</div>`}
+
+function pgSettings(){const n=notifyCfg();const conn=CONN;
+ const sw=(k,on)=>`<label class="sw"><input type="checkbox" data-ch="notify" data-k="${k}" ${on?'checked':''}><span></span></label>`;
+ const install=isIOS()&&!isStandalone()?`<div class="banner" style="border-color:rgba(79,124,255,.45);background:rgba(79,124,255,.1)">${ic('down',18)}<div class="sp"><b>Install on your iPhone first.</b> In Safari tap Share, then <b>Add to Home Screen</b>. Open EverStone from the new icon, then come back here to turn on notifications.</div></div>`:'';
+ const connCard=conn?`<div class="card glow"><div class="ch"><h2>Sync & reminder service</h2>${SYNC.state==='synced'?pill('Connected','p-green'):SYNC.state==='error'?pill('Can\'t reach it','p-red'):pill('Connecting…','p-gray')}</div>
+  <div class="mono muted">${esc(conn.url)}</div><p class="muted" style="font-size:13px">Your builds, listings, clients and tasks are stored there, so every device you connect shows the same data.</p>
+  <div class="row"><button class="btn" data-act="syncNow">${ic('up',16)} Sync now</button><button class="btn danger" data-act="disconnect">Disconnect this device</button></div></div>`
+ :`<div class="card glow"><div class="ch"><h2>Connect sync & reminders</h2>${pill('Not connected','p-gray')}</div>
+  <p class="muted" style="margin-top:0;font-size:13px">Paste the address of your Cloudflare Worker and the access key you saved in it. Do this once on each device.</p>
+  <form data-form="connect" class="fgrid" style="margin:0 0 4px"><label class="full">Worker address<input name="url" type="url" required placeholder="https://everstone-hub-api.yourname.workers.dev" autocomplete="off"></label>
+  <label class="full">Access key<input name="key" type="password" required autocomplete="off" placeholder="The ACCESS_KEY you set in Cloudflare"></label>
+  <div class="row full" style="grid-column:1/-1"><button class="btn primary">${ic('bolt',16)} Connect</button><button type="button" class="btn" data-act="genKey">Make me an access key</button></div></form>
+  <div id="genOut"></div></div>`;
+ const pushCard=`<div class="card"><div class="ch"><h2>Notifications on this device</h2>${PUSH_ON?pill('On','p-green'):pill('Off','p-gray')}</div>
+  ${!conn?'<p class="muted" style="margin:0">Connect the reminder service first.</p>'
+   :!pushSupported()?`<p class="muted" style="margin:0">${isIOS()&&!isStandalone()?'Add EverStone to your Home Screen and open it from the icon to turn on notifications.':'This browser can\'t receive notifications.'}</p>`
+   :`<div class="row">${PUSH_ON?`<button class="btn" data-act="testPush">${ic('bolt',16)} Send test notification</button><button class="btn" data-act="pushOff">Turn off here</button>`:`<button class="btn primary" data-act="pushOn">${ic('bolt',16)} Turn on notifications</button>`}</div>
+   ${Notification.permission==='denied'?'<p class="bad" style="font-size:12.5px">Notifications are blocked for this app. Turn them on in your phone\'s Settings → Notifications → EverStone.</p>':''}`}</div>`;
+ const remCard=`<div class="card"><div class="ch"><h2>What to remind me about</h2></div>
+  <div class="setrow"><div class="sp"><b>Daily summary</b><small>Overdue and today's tasks for EverStone and Realtor, in one notification.</small></div>${sw('digest',n.digest)}</div>
+  <div class="setrow"><div class="sp"><b>Summary time</b><small>Arrives within 15 minutes of this time.</small></div><input type="time" data-ch="notify" data-k="digestTime" value="${esc(n.digestTime)}" style="width:130px"></div>
+  <div class="setrow"><div class="sp"><b>Include crew dates, showings & follow-ups</b><small>Planned checklist dates, showings, closings and client follow-ups.</small></div>${sw('extras',n.extras)}</div>
+  <div class="setrow"><div class="sp"><b>Heads-up for tomorrow</b><small>Adds tomorrow's task count to the summary.</small></div>${sw('tomorrow',n.tomorrow)}</div>
+  <div class="setrow"><div class="sp"><b>Tasks with a reminder time</b><small>When you set a time on a task, get a separate alert.</small></div>
+   <select data-ch="notify" data-k="lead" style="width:150px">${[[0,'At the time'],[15,'15 min before'],[30,'30 min before'],[60,'1 hour before'],[120,'2 hours before']].map(([v,l])=>`<option value="${v}" ${+n.lead===v?'selected':''}>${l}</option>`).join('')}</select></div></div>`;
+ return head('Settings','App','Settings','Sync between your phone and computer, reminders, and backups.')+install
+ +`<div class="grid2"><div class="stack">${connCard}${pushCard}${remCard}</div>
+ <div class="stack"><div class="card"><div class="ch"><h2>Backup</h2>${S.meta.lastExport?`<span class="muted">Last: ${fmt(S.meta.lastExport,1)}</span>`:''}</div>
+ <p class="muted" style="margin-top:0;font-size:13px">A .json copy of everything. Import also loads the starter file with your vendor contacts.</p>
+ <div class="row"><button class="btn" data-act="export">${ic('down',16)} Export backup</button><label class="btn" style="cursor:pointer">${ic('up',16)} Import backup<input type="file" accept=".json,application/json" data-ch="import" hidden></label></div></div>
+ <div class="card"><div class="ch"><h2>Your name</h2></div><input data-ch="meta" data-k="name" value="${esc(S.meta.name||'')}" style="width:100%"></div>
+ <div class="card"><div class="ch"><h2>What's stored</h2></div><div class="dl">
+ <div><small>Builds</small><span>${S.builds.length}</span></div><div><small>Listings</small><span>${S.listings.length}</span></div><div><small>Tasks</small><span>${S.tasks.length}</span></div><div><small>Contacts</small><span>${S.contacts.length}</span></div><div><small>Realtor clients</small><span>${S.clients.length}</span></div></div></div>
+ <div class="card" style="border-color:rgba(251,113,133,.3)"><div class="ch"><h2>Danger zone</h2></div><p class="muted" style="margin-top:0;font-size:13px">Erases everything${conn?', on every connected device':' on this device'}. Export first.</p><button class="btn danger" data-act="reset">${ic('trash',16)} Erase all data</button></div></div></div>`}
+function notifyCfg(){S.meta.notify=Object.assign({enabled:true,digest:true,digestTime:'07:30',extras:true,tomorrow:true,lead:0},S.meta.notify||{});return S.meta.notify}
+/* ---------- REALTOR ---------- */
+function gci(l){const p=+(l.soldPrice||l.price)||0,r=+l.commission||+S.meta.defComm||0;return p*r/100}
+function net(l){return gci(l)*(+l.split||+S.meta.defSplit||100)/100}
+function fillClient(d){if(d.clientId){const c=getCl(d.clientId);if(c){if(!d.client)d.client=c.name;if(!d.clientPhone)d.clientPhone=c.phone||'';if(!d.clientEmail)d.clientEmail=c.email||''}}}
+const sinceC=c=>c.lastContact?days(c.lastContact,TODAY()):null;
+function stale(c){const n=sinceC(c);return ['Active','Under contract'].includes(c.stage)&&(n===null||n>14)}
+const priceRange=c=>(c.priceMin||c.priceMax)?(c.priceMin?moneyK(c.priceMin):'')+'–'+(c.priceMax?moneyK(c.priceMax):''):'';
+const initials=n=>esc(String(n||'?').split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase());
+function clientChips(c){return (c.phone?`<a class="chip" href="tel:${esc(c.phone)}">${ic('phone',13)} Call</a><a class="chip sms" href="sms:${esc(c.phone)}">${ic('msg',13)} Text</a>`:'')+(c.email?`<a class="chip" href="mailto:${esc(c.email)}">${ic('mail',13)} Email</a>`:'')}
+
+function pgRealtor(){const T=TODAY(),yr=String(new Date().getFullYear());
+ const act=S.clients.filter(c=>['Lead','Nurture','Active'].includes(c.stage));
+ const pend=S.listings.filter(l=>l.status==='Pending');
+ const closed=S.listings.filter(l=>l.status==='Sold'&&(l.closeDate||'').startsWith(yr));
+ const cGci=closed.reduce((a,l)=>a+gci(l),0),pGci=pend.reduce((a,l)=>a+gci(l),0),cNet=closed.reduce((a,l)=>a+net(l),0);
+ const goal=+S.meta.gciGoal||0;
+ const fu=S.clients.filter(c=>c.followUp&&c.followUp<=T&&!['Closed','Lost'].includes(c.stage));
+ const cold=S.clients.filter(stale);
+ const deals=S.listings.filter(l=>!['Sold','Withdrawn'].includes(l.status));
+ const up=agendaItems().filter(i=>['Follow-up','Showing','Closing'].includes(i.kind)||(i.kind==='Task'&&i.cat==='Real Estate')).filter(i=>days(T,i.date)<=14).slice(0,10);
+ const cols=['Lead','Nurture','Active','Under contract','Closed'];
+ return head('Realtor','Realtor','HQ','Your agent business: clients, pipeline, deals, follow-ups and commission.',`<button class="btn" data-act="newListing">${ic('tag',16)} New listing / deal</button><button class="btn primary" data-act="newClient">${ic('plus',16)} New client</button>`)
+ +`<div class="kpis">${kpi('user',act.length,'Active clients & leads',(n=>`${n} new lead${n===1?'':'s'}`)(S.clients.filter(c=>c.stage==='Lead').length))}
+ ${kpi('clock',pend.length,'Under contract',pend.length?`<span class="up">${moneyK(pGci)}</span> pending GCI`:'')}
+ ${kpi('dollar',moneyK(cGci),'Closed GCI '+yr,goal?`${Math.round(cGci/goal*100)}% of ${moneyK(goal)} goal`:`${closed.length} closed`)}
+ ${kpi('msg',fu.length,'Follow-ups due',cold.length?`<span class="warnc">${cold.length} going cold</span>`:'<span class="up">all caught up</span>')}</div>
+ <div class="card glow" style="margin-bottom:18px"><div class="ch"><h2>Client pipeline</h2><a class="btn sm" href="#clients">All clients</a></div>
+ ${S.clients.length?`<div class="pipe">${cols.map(st=>{const l=S.clients.filter(c=>c.stage===st&&(st!=='Closed'||!c.closedDate||c.closedDate.startsWith(yr)));
+  return `<div class="pcol"><h4><span>${st}</span><span>${l.length}</span></h4>${l.map(c=>`<a class="pc" href="#client/${c.id}"><b>${esc(c.name)}</b><div class="dim" style="font-size:11.5px">${esc(c.type||'')}${priceRange(c)?' · '+priceRange(c):''}</div>${c.followUp&&st!=='Closed'?`<div style="font-size:11.5px" class="${c.followUp<T?'bad':'muted'}">${ic('clock',11)} ${rel(c.followUp)}</div>`:''}${stale(c)?'<div style="font-size:11.5px" class="warnc">Going cold</div>':''}</a>`).join('')||'<div class="dim" style="font-size:12px;padding:4px">—</div>'}</div>`}).join('')}</div>`
+ :`<div class="empty"><div class="big">No clients yet</div>Add the buyers and sellers you're working with and watch them move through your pipeline.<br><br><button class="btn primary" data-act="newClient">${ic('plus',16)} New client</button></div>`}</div>
+ <div class="grid2"><div class="stack">
+  <div class="card"><div class="ch"><h2>Active deals</h2><a class="btn sm" href="#realestate">Listings & deals</a></div>
+  ${deals.length?`<div style="overflow-x:auto"><table><tr><th>Property</th><th>Side</th><th>Status</th><th style="text-align:right">Price</th><th style="text-align:right">Est. GCI</th></tr>${deals.map(l=>`<tr><td><a href="#listing/${l.id}"><b>${esc(l.address)}</b></a><div class="dim" style="font-size:12px">${esc(l.client||'')}${l.status==='Pending'&&l.closeDate?' · closing '+fmt(l.closeDate):''}</div></td><td>${esc(l.side||'')}</td><td>${pill(l.status)}</td><td style="text-align:right">${money(l.price)}</td><td style="text-align:right;font-weight:700">${gci(l)?money(gci(l)):'—'}</td></tr>`).join('')}</table></div>`:'<div class="empty" style="padding:18px">No active deals.</div>'}</div>
+  <div class="card"><div class="ch"><h2>Realtor tasks</h2><a class="btn sm" href="#tasks">All tasks</a></div>${taskBar({cat:'Real Estate'})}<div style="margin-top:10px">${taskList(S.tasks.filter(t=>t.cat==='Real Estate'&&!t.done),'No open real estate tasks.')}</div></div>
+ </div><div class="stack">
+  <div class="card glow"><div class="ch"><h2>${yr} goal</h2></div><div class="row" style="gap:18px">${ring(goal?Math.min(1,cGci/goal):0,96,8)}<div class="sp" style="min-width:150px"><div class="kv">Closed GCI: <b>${money(cGci)}</b></div><div class="kv">Your net: <b>${money(cNet)}</b></div><div class="kv">Pending GCI: <b>${money(pGci)}</b></div>${goal?`<div class="kv">Still needed: <b>${money(Math.max(0,goal-cGci))}</b></div>`:'<div class="kv dim">Set a goal below</div>'}</div></div>
+  <div class="fgrid" style="margin:14px 0 0"><label>Annual GCI goal ($)<input type="number" data-ch="meta" data-k="gciGoal" value="${esc(S.meta.gciGoal||'')}" placeholder="e.g. 150000"></label><label>Default commission (%)<input type="number" step="any" data-ch="meta" data-k="defComm" value="${esc(S.meta.defComm||'')}" placeholder="e.g. 3"></label><label class="full">Your default split (%)<input type="number" step="any" data-ch="meta" data-k="defSplit" value="${esc(S.meta.defSplit||'')}" placeholder="What you keep after the brokerage, e.g. 70"></label></div></div>
+  <div class="card"><div class="ch"><h2>Next 14 days</h2><a class="btn sm" href="#schedule">Schedule</a></div>${up.length?up.map(agendaRow).join(''):'<div class="empty" style="padding:18px">No follow-ups, showings or closings coming up.</div>'}</div>
+  ${cold.length?`<div class="card" style="border-color:rgba(251,191,36,.35)"><div class="ch"><h2 class="warnc">Going cold</h2><span class="muted">Active, no contact in 14+ days</span></div>${cold.map(c=>`<a class="ag" href="#client/${c.id}"><span class="avatar">${initials(c.name)}</span><div class="am"><div class="at">${esc(c.name)}</div><div class="as">${sinceC(c)===null?'No contact logged':'Last contact '+sinceC(c)+'d ago'} · ${esc(c.stage)}</div></div>${ic('right',16)}</a>`).join('')}</div>`:''}
+ </div></div>`}
+
+function pgClients(){const st=S.ui.clStage||'All',ty=S.ui.clType||'All',T=TODAY();
+ const list=S.clients.filter(c=>(st==='All'||c.stage===st)&&(ty==='All'||c.type===ty)).sort((a,b)=>{const d=CLIENT_STAGES.indexOf(a.stage)-CLIENT_STAGES.indexOf(b.stage);if(d)return d;return (a.followUp||'9')<(b.followUp||'9')?-1:1});
+ return head('Realtor','My','Clients','Buyers, sellers and leads: contact info, what they want, and when to follow up.',`<button class="btn primary" data-act="newClient">${ic('plus',16)} New client</button>`)
+ +`<div class="row" style="margin-bottom:16px;justify-content:space-between"><div class="filters">${['All',...CLIENT_STAGES].map(s=>`<button class="${st===s?'on':''}" data-act="clStage" data-v="${s}">${s}${s!=='All'?' '+S.clients.filter(c=>c.stage===s).length:''}</button>`).join('')}</div>
+ <select data-ch="clType" aria-label="Client type"><option value="All">All types</option>${CLIENT_TYPES.map(t=>`<option ${ty===t?'selected':''}>${t}</option>`).join('')}</select></div>
+ ${list.length?`<div class="grid3">${list.map(c=>{const n=sinceC(c);return `<div class="card lcard"><div class="row"><span class="avatar">${initials(c.name)}</span><a class="sp" href="#client/${c.id}" style="min-width:0"><div style="font-weight:700">${esc(c.name)}</div><div class="muted" style="font-size:12.5px">${esc(c.type||'')}${c.source?' · '+esc(c.source):''}</div></a>${pill(c.stage)}</div>
+ <div class="facts">${priceRange(c)?`<span><b>${priceRange(c)}</b></span>`:''}${c.preapproved?`<span>Pre-approved: <b>${esc(c.preapproved)}</b></span>`:''}${c.areas?`<span>${esc(c.areas)}</span>`:''}</div>
+ <div class="row" style="gap:6px">${c.followUp&&!['Closed','Lost'].includes(c.stage)?`<span class="pill ${c.followUp<T?'p-red':c.followUp===T?'p-amber':''}">${ic('clock',12)} Follow-up: ${rel(c.followUp)}</span>`:''}<span class="pill ${stale(c)?'p-amber':'p-gray'}">${n===null?'No contact logged':'Contacted '+(n===0?'today':n+'d ago')}</span></div>
+ <div class="row" style="gap:6px">${clientChips(c)}<a class="chip" href="#client/${c.id}" style="margin-left:auto">Open ${ic('right',12)}</a></div></div>`}).join('')}</div>`
+ :`<div class="card empty"><div class="big">${S.clients.length?'No clients match':'No clients yet'}</div>Add a buyer, seller or lead to start tracking them.<br><br><button class="btn primary" data-act="newClient">${ic('plus',16)} New client</button></div>`}`}
+
+function pgClient(id){const c=getCl(id);if(!c)return notFound('Client');const T=TODAY();
+ const deals=S.listings.filter(l=>l.clientId===c.id);const tasks=S.tasks.filter(t=>t.link==='client:'+c.id);const n=sinceC(c);
+ const log=c.log.slice().sort((a,b)=>(b.date||'')<(a.date||'')?-1:(b.date||'')>(a.date||'')?1:0);
+ return `<a class="back" href="#clients">${ic('left',16)} All clients</a>`
+ +head(esc(c.type||'Client'),esc(c.name),'',`${c.source?'Source: '+esc(c.source)+' · ':''}Added ${fmt(c.created||T,1)}`,
+ `${pill(c.stage)}<button class="btn" data-act="editClient" data-id="${c.id}">${ic('edit',16)} Edit</button><button class="btn primary" data-act="dealFromClient" data-id="${c.id}">${ic('tag',16)} New deal</button>`)
+ +`<div class="grid2"><div class="stack">
+ <div class="card glow"><div class="ch"><h2>Stay in touch</h2><span class="muted">${n===null?'No contact logged yet':'Last contact '+(n===0?'today':n+' days ago')}</span></div>
+  <div class="row" style="gap:6px;margin-bottom:14px">${clientChips(c)||'<span class="dim">Add phone/email in Edit</span>'}</div>
+  <div class="row"><label class="datef ${c.followUp?'set':''}">${ic('cal',14)} Next follow-up <input type="date" data-ch="cfield" data-id="${c.id}" data-k="followUp" value="${c.followUp||''}"></label>${c.followUp?`<span class="${c.followUp<T?'bad':'muted'}" style="font-size:12.5px">${rel(c.followUp)}</span>`:''}</div>
+  <div class="row" style="gap:6px;margin-top:10px">${[[1,'Tomorrow'],[3,'+3 days'],[7,'+1 week'],[14,'+2 weeks'],[30,'+1 month']].map(([d,l])=>`<button class="btn sm" data-act="fu" data-id="${c.id}" data-d="${d}">${l}</button>`).join('')}</div></div>
+ <div class="card"><div class="ch"><h2>Activity log</h2><span class="muted">${c.log.length} entr${c.log.length===1?'y':'ies'}</span></div>
+  <form class="logf" data-form="log" data-id="${c.id}"><select name="type" aria-label="Type">${['Call','Text','Email','Showing','Meeting','Voicemail','Note'].map(t=>`<option>${t}</option>`).join('')}</select><input name="note" placeholder="What happened? e.g. Wants to see 708 Doe Pointe on Saturday" autocomplete="off"><button class="btn primary">${ic('plus',16)} Log</button></form>
+  ${log.length?`<div style="margin-top:10px">${log.map(e=>`<div class="ag"><div class="dbox"><small>${pd(e.date).toLocaleDateString(undefined,{month:'short'})}</small><b>${pd(e.date).getDate()}</b></div><div class="am"><div class="at">${esc(e.type)}</div><div class="as">${esc(e.note||'')}</div></div><button class="ibtn" data-act="delLog" data-id="${c.id}" data-e="${e.id}" title="Delete">${ic('trash',14)}</button></div>`).join('')}</div>`:'<div class="dim" style="font-size:12.5px;margin-top:10px">Log calls, texts and showings so you always know where things stand.</div>'}</div>
+ <div class="card"><div class="ch"><h2>Deals</h2><button class="btn sm" data-act="dealFromClient" data-id="${c.id}">${ic('plus',14)} New deal</button></div>
+  ${deals.length?deals.map(l=>`<a class="ag" href="#listing/${l.id}"><div class="am"><div class="at">${esc(l.address)}</div><div class="as">${esc(l.side||'')} side · ${money(l.price)}${gci(l)?' · GCI '+money(gci(l)):''}</div></div>${pill(l.status)}</a>`).join(''):'<div class="dim" style="font-size:12.5px">No deals linked yet.</div>'}</div>
+ </div><div class="stack">
+ <div class="card"><div class="ch"><h2>Profile</h2></div><div class="dl">${[['Type',c.type],['Stage',c.stage],['Price range',priceRange(c)],['Pre-approved',c.preapproved],['Lender',c.lender],['Timeline',c.timeline],['Areas',c.areas],['Must-haves',c.wants],['Phone',c.phone],['Email',c.email]].map(([k,v])=>`<div><small>${k}</small><span style="word-break:break-word">${esc(v||'—')}</span></div>`).join('')}</div></div>
+ <div class="card"><div class="ch"><h2>Tasks for this client</h2></div>${taskBar({cat:'Real Estate',link:'client:'+c.id})}<div style="margin-top:10px">${taskList(tasks,'No tasks linked to this client.')}</div></div>
+ <div class="card"><div class="ch"><h2>Notes</h2><span class="dim" style="font-size:12px">Saves automatically</span></div><textarea data-ch="cfield" data-id="${c.id}" data-k="notes" rows="6" placeholder="Family, motivation, homes they liked…">${esc(c.notes||'')}</textarea></div>
+ <button class="btn danger" data-act="delClient" data-id="${c.id}" style="align-self:flex-start">${ic('trash',16)} Delete client</button>
+ </div></div>`}
+function notFound(w){return `<div class="card empty"><div class="big">${w} not found</div>It may have been deleted.<br><br><a class="btn" href="#dashboard">Go to dashboard</a></div>`}
+
+/* ================= FORMS / MODAL ================= */
+const F=(k,l,t='text',o={})=>Object.assign({k,l,t},o);
+const BUILD_FIELDS=[F('name','Build name','text',{full:1,req:1,ph:'e.g. Lot 12 — Pine Lake Estates'}),F('company','Company','select',{opts:['EverStone Homes','DS Solid Construction']}),F('status','Status','select',{opts:BUILD_STATUS}),
+ F('address','Address','text',{full:1}),F('community','Community'),F('plan','Floor plan'),F('beds','Beds','number'),F('baths','Baths','number'),F('sqft','Sq ft','number'),F('lotPrice','Lot price ($)','number'),
+ F('budget','Construction budget ($)','number'),F('startDate','Start date','date'),F('targetDate','Target completion','date'),F('buyer','Buyer (blank = spec)'),F('buyerPhone','Buyer phone','tel'),F('buyerEmail','Buyer email','email')];
+const LIST_FIELDS=[F('address','Address','text',{full:1,req:1}),F('city','City, ST'),F('status','Status','select',{opts:LIST_STATUS}),F('side','Side','select',{opts:['Listing','Buyer']}),F('price','List price ($)','number'),
+ F('beds','Beds','number'),F('baths','Baths','number'),F('sqft','Sq ft','number'),F('ptype','Year built / type',null,{ph:'2026 · New construction'}),F('mls','MLS #'),F('listDate','List date','date'),F('closeDate','Closing date','date'),F('soldPrice','Sold price ($)','number'),
+ F('commission','Commission rate (%)','number',{ph:'e.g. 3'}),F('split','Your split (%)','number',{ph:'e.g. 70'}),F('clientId','Linked realtor client','select',{optsFn:()=>[['','None'],...S.clients.map(c=>[c.id,c.name])]}),F('client','Client name'),F('clientPhone','Client phone','tel'),F('clientEmail','Client email','email'),F('zillowUrl','Zillow link','url',{full:1}),F('buildId','Linked EverStone build','select',{optsFn:()=>[['','None'],...S.builds.map(b=>[b.id,b.name])]})];
+const TASK_FIELDS=[F('title','Task','text',{full:1,req:1}),F('cat','Category','select',{opts:['EverStone','Real Estate']}),F('pri','Priority','select',{opts:[['High','High'],['Med','Medium'],['Low','Low']]}),F('link','Linked home','linksel',{full:1}),F('due','Due date','date'),F('time','Reminder time (optional)','time'),F('notes','Notes','textarea',{full:1})];
+const CLIENT_FIELDS=[F('name','Name','text',{req:1,ph:'e.g. John & Sara Miller'}),F('type','Type','select',{opts:CLIENT_TYPES}),F('stage','Stage','select',{opts:CLIENT_STAGES}),F('source','Lead source','select',{opts:SOURCES}),
+ F('phone','Phone','tel'),F('email','Email','email'),F('priceMin','Price min ($)','number'),F('priceMax','Price max ($)','number'),F('preapproved','Pre-approved','select',{opts:['','Yes','In progress','No','Cash buyer']}),F('lender','Lender'),
+ F('areas','Areas / neighborhoods','text',{full:1,ph:'Ankeny, Bondurant, Altoona…'}),F('wants','Must-haves','text',{full:1,ph:'4 bed, 3-car garage, walkout'}),F('timeline','Timeline','select',{opts:['','ASAP','1–3 months','3–6 months','6–12 months','12+ months']}),F('followUp','Next follow-up','date')];
+const CONTACT_FIELDS=[F('name','Name','text',{req:1}),F('company','Company'),F('trade','Trade / role','text',{full:1}),F('phone','Phone','tel'),F('email','Email','email')];
+
+function openForm(title,fields,data,onSave,extra=''){const m=$('#modal');
+ m.innerHTML=`<form class="mbox" data-form="modal"><div class="row" style="justify-content:space-between"><h2 style="font-size:19px">${title}</h2><button type="button" class="ibtn" data-act="closeModal" aria-label="Close">✕</button></div>
+ <div class="fgrid">${fields.map(f=>{const v=data[f.k]??'';const full=f.full||f.t==='textarea'?'full':'';let inp;
+  if(f.t==='select'){const opts=f.optsFn?f.optsFn():f.opts.map(o=>Array.isArray(o)?o:[o,o]);inp=`<select name="${f.k}">${opts.map(([val,lab])=>`<option value="${esc(val)}" ${String(v)===String(val)?'selected':''}>${esc(lab)}</option>`).join('')}</select>`}
+  else if(f.t==='linksel')inp=`<select name="${f.k}">${linkOptions(v)}</select>`;
+  else if(f.t==='textarea')inp=`<textarea name="${f.k}" rows="3">${esc(v)}</textarea>`;
+  else inp=`<input name="${f.k}" type="${f.t||'text'}" ${f.t==='number'?'step="any"':''} value="${esc(v)}" ${f.req?'required':''} placeholder="${esc(f.ph||'')}">`;
+  return `<label class="${full}">${f.l}${inp}</label>`}).join('')}</div>${extra}
+ <div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-act="closeModal">Cancel</button><button class="btn primary">Save</button></div></form>`;
+ m.hidden=false;m._save=onSave;m._fields=fields;setTimeout(()=>{const i=m.querySelector('input,select');i&&i.focus()},30)}
+function selectText(el){try{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+function closeModal(){const m=$('#modal');if(m._ask){m._ask(false);return}m.hidden=true;m.innerHTML=''}
+function ask(msg,label='Delete'){return new Promise(res=>{const m=$('#modal');
+ m.innerHTML=`<div class="mbox" role="alertdialog" style="width:min(440px,100%)"><h2 style="font-size:18px">Are you sure?</h2><p class="muted">${esc(msg)}</p><div class="row" style="justify-content:flex-end"><button type="button" class="btn" id="askNo">Cancel</button><button type="button" class="btn ${['Replace','Use cloud data','Disconnect'].includes(label)?'primary':'danger'}" id="askYes">${esc(label)}</button></div></div>`;
+ m.hidden=false;const done=v=>{m._ask=null;m.hidden=true;m.innerHTML='';res(v)};m._ask=done;
+ m.querySelector('#askNo').onclick=()=>done(false);m.querySelector('#askYes').onclick=()=>done(true);setTimeout(()=>{const b=m.querySelector('#askYes');b&&b.focus()},30)})}
+
+/* ================= ACTIONS ================= */
+const ACT={
+ closeModal,
+ genKey(){const a=new Uint8Array(24);crypto.getRandomValues(a);const k=Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');
+  const out=document.getElementById('genOut');if(out)out.innerHTML=`<div class="card" style="margin-top:12px;background:var(--panel2)"><div class="muted" style="font-size:12px;margin-bottom:6px">Your new access key. Copy it into Cloudflare as the ACCESS_KEY secret, and keep a copy somewhere safe.</div><div class="mono" id="genKeyText" style="user-select:all">${k}</div><button type="button" class="btn sm" style="margin-top:8px" data-act="copyKey">Copy</button></div>`;
+  const f=document.querySelector('[data-form=connect]');if(f)f.elements.key.value=k},
+ copyKey(){const t=document.getElementById('genKeyText');if(!t)return;const k=t.textContent;try{navigator.clipboard.writeText(k).then(()=>toast('Copied'),()=>{selectText(t);toast('Select and copy the key')})}catch(e){selectText(t)}},
+ async syncNow(){if(SYNC.dirty){await push()}else{SYNC.version=0;await pull()}toast(SYNC.state==='synced'?'Synced':'Could not reach the service')},
+ async disconnect(){if(!await ask('This device stops syncing. Your data stays on it, and the cloud copy is untouched.','Disconnect'))return;
+  try{const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();if(sub){await api('/unsubscribe',{method:'POST',body:JSON.stringify({endpoint:sub.endpoint})}).catch(()=>{});await sub.unsubscribe()}}catch(e){}
+  CONN=null;try{localStorage.removeItem(CONN_KEY)}catch(e){}PUSH_ON=false;SYNC.state='local';syncBadge();render();toast('Disconnected')},
+ async pushOn(){let perm;try{perm=await Notification.requestPermission()}catch(e){perm='denied'}
+  if(perm!=='granted'){toast('Notifications were not allowed');render();return}
+  try{const reg=await navigator.serviceWorker.ready;const {publicKey}=await api('/vapid');let sub=await reg.pushManager.getSubscription();
+   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uBytes(publicKey)});
+   await api('/subscribe',{method:'POST',body:JSON.stringify({subscription:sub.toJSON(),label:deviceLabel()})});PUSH_ON=true;notifyCfg();save();render();toast('Notifications are on')}
+  catch(e){toast('Could not turn on notifications: '+e.message)}},
+ async pushOff(){try{const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();if(sub){await api('/unsubscribe',{method:'POST',body:JSON.stringify({endpoint:sub.endpoint})});await sub.unsubscribe()}}catch(e){}PUSH_ON=false;render();toast('Notifications off on this device')},
+ async testPush(){try{const r=await api('/test',{method:'POST'});toast(r.sent?'Test sent — check your notifications':'No devices received it. Turn notifications off and on again.')}catch(e){toast('Could not send: '+e.message)}},
+ newClient(){openForm('New client',CLIENT_FIELDS,{type:'Buyer',stage:'Lead'},d=>{const c=Object.assign({id:uid(),created:TODAY(),log:[]},d);if(c.stage==='Closed')c.closedDate=TODAY();S.clients.unshift(c);save();go('#client/'+c.id);toast('Client added')})},
+ editClient(el){const c=getCl(el.dataset.id);openForm('Edit client',CLIENT_FIELDS,c,d=>{if(d.stage==='Closed'&&c.stage!=='Closed')c.closedDate=TODAY();Object.assign(c,d);save();render();toast('Saved')})},
+ async delClient(el){const c=getCl(el.dataset.id);if(!await ask(`Delete client "${c.name}"?`))return;S.clients=S.clients.filter(x=>x!==c);S.listings.forEach(l=>{if(l.clientId===c.id)l.clientId=''});S.tasks.forEach(t=>{if(t.link==='client:'+c.id)t.link=''});save();go('#clients');toast('Client deleted')},
+ dealFromClient(el){const c=getCl(el.dataset.id);const sell=c.type==='Seller';ACT.newListing(null,{clientId:c.id,client:c.name,clientPhone:c.phone||'',clientEmail:c.email||'',side:sell?'Listing':'Buyer',status:sell?'Coming Soon':'Active',listDate:sell?TODAY():''})},
+ clStage(el){S.ui.clStage=el.dataset.v;save();render()},
+ fu(el){const c=getCl(el.dataset.id);const d=new Date();d.setDate(d.getDate()+(+el.dataset.d));c.followUp=ymd(d);save();render();toast('Follow-up set for '+fmt(c.followUp))},
+ delLog(el){const c=getCl(el.dataset.id);c.log=c.log.filter(e=>e.id!==el.dataset.e);save();render()},
+ newBuild(){openForm('New build',BUILD_FIELDS,{company:'EverStone Homes',status:'Pre-construction'},d=>{const b=Object.assign({id:uid(),created:TODAY(),checks:{},dates:{},notesBy:{},doneAt:{},custom:[],expenses:[]},d);S.builds.unshift(b);save();go('#build/'+b.id);toast('Build created — checklist ready')})},
+ editBuild(el){const b=getB(el.dataset.id);openForm('Edit build',BUILD_FIELDS,b,d=>{Object.assign(b,d);save();render();toast('Saved')})},
+ async delBuild(el){const b=getB(el.dataset.id);if(!await ask(`Delete "${b.name}" and its checklist progress? This can't be undone.`))return;S.builds=S.builds.filter(x=>x!==b);S.listings.forEach(l=>{if(l.buildId===b.id)l.buildId=''});save();go('#builds');toast('Build deleted')},
+ bFilter(el){S.ui.bFilter=el.dataset.v;save();render()},
+ togglePhase(el){const p=el.dataset.p;if(S.ui.ckFilter!=='all')return;S.ui.collapsed[p]=!S.ui.collapsed[p];save();el.parentElement.classList.toggle('closed',!!S.ui.collapsed[p])},
+ expandAll(){S.ui.collapsed={};save();render()},
+ collapseDone(){const b=getB(S.ui.lastBuild);if(!b)return;PHASES.forEach(ph=>{if(ph.steps.every(s=>b.checks[s.id]))S.ui.collapsed[ph.id]=true});save();render()},
+ ckFilter(el){S.ui.ckFilter=el.dataset.v;save();render()},
+ noteToggle(el){const ta=el.closest('.sbody').querySelector('textarea');ta.hidden=!ta.hidden;if(!ta.hidden)ta.focus()},
+ addCustom(el){const b=getB(el.dataset.id);openForm('Add a custom step',[F('t','Step','text',{full:1,req:1,ph:'e.g. Install radon mitigation'})],{},d=>{b.custom.push({id:'cx_'+uid(),t:d.t});save();render();toast('Step added to this build')})},
+ async delCustom(el){const b=getB(el.dataset.b);if(!await ask('Remove this custom step?'))return;b.custom=b.custom.filter(c=>c.id!==el.dataset.s);delete b.checks[el.dataset.s];delete b.dates[el.dataset.s];save();render()},
+ addExpense(el){const b=getB(el.dataset.id);openForm('Log a cost',[F('desc','Item','text',{full:1,req:1,ph:'e.g. Foundation pour'}),F('vendor','Vendor'),F('amount','Amount ($)','number',{req:1}),F('date','Date','date')],{date:TODAY()},d=>{b.expenses.push(Object.assign({id:uid()},d));save();render();toast('Cost logged')})},
+ delExpense(el){const b=getB(el.dataset.id);b.expenses=b.expenses.filter(e=>e.id!==el.dataset.e);save();render()},
+ listingFromBuild(el){const b=getB(el.dataset.id);ACT.newListing(null,{address:b.address||b.name,beds:b.beds,baths:b.baths,sqft:b.sqft,buildId:b.id,status:'Coming Soon',side:'Listing',ptype:new Date().getFullYear()+' · New construction',client:b.company||'EverStone Homes'})},
+ newListing(el,pre){openForm('New listing',LIST_FIELDS,Object.assign({status:'Active',side:'Listing',listDate:TODAY()},pre||{}),d=>{fillClient(d);const l=Object.assign({id:uid(),tx:{},showings:[]},d);S.listings.unshift(l);
+  if(l.buildId){const b=getB(l.buildId);if(b&&!['Sold'].includes(b.status))b.status='Listed'}save();go('#listing/'+l.id);toast('Listing added')})},
+ editListing(el){const l=getL(el.dataset.id);openForm('Edit listing',LIST_FIELDS,l,d=>{fillClient(d);const was=l.status;Object.assign(l,d);
+  if(d.status==='Sold'&&was!=='Sold'&&!l.closeDate)l.closeDate=TODAY();if(l.buildId&&d.status==='Sold'){const b=getB(l.buildId);if(b)b.status='Sold'}save();render();toast('Saved')})},
+ async delListing(el){const l=getL(el.dataset.id);if(!await ask(`Delete listing "${l.address}"?`))return;S.listings=S.listings.filter(x=>x!==l);save();go('#realestate');toast('Listing deleted')},
+ lsFilter(el){S.ui.lsFilter=el.dataset.v;save();render()},
+ addShowing(el){const l=getL(el.dataset.id);openForm('Log showing / open house',[F('date','Date','date',{req:1}),F('type','Type','select',{opts:['Showing','Open house','Second showing','Inspection','Appraisal']}),F('who','Agent / buyer','text',{full:1}),F('interest','Interest','select',{opts:['','High','Medium','Low']}),F('feedback','Feedback','textarea')],{date:TODAY(),type:'Showing'},d=>{l.showings.push(Object.assign({id:uid()},d));save();render();toast('Logged')})},
+ delShowing(el){const l=getL(el.dataset.id);l.showings=l.showings.filter(s=>s.id!==el.dataset.s);save();render()},
+ editTask(el){const t=S.tasks.find(x=>x.id===el.dataset.id);openForm('Edit task',TASK_FIELDS,t,d=>{Object.assign(t,d);save();render();toast('Saved')})},
+ delTask(el){S.tasks=S.tasks.filter(t=>t.id!==el.dataset.id);save();render();toast('Task deleted')},
+ taskFilter(el){S.ui.taskFilter=el.dataset.v;save();render()},
+ async clearDone(){const n=S.tasks.filter(t=>t.done).length;if(!await ask(`Remove ${n} completed task(s)?`))return;S.tasks=S.tasks.filter(t=>!t.done);save();render()},
+ schFilter(el){S.ui.schFilter=el.dataset.v;save();render()},
+ newContact(){openForm('Add contact',CONTACT_FIELDS,{},d=>{S.contacts.push(Object.assign({id:'c_'+uid()},d));save();render();toast('Contact added')})},
+ editContact(el){const c=getC(el.dataset.id);openForm('Edit contact',CONTACT_FIELDS,c,d=>{Object.assign(c,d);save();render();toast('Saved')},
+  `<button type="button" class="btn danger sm" data-act="delContact" data-id="${c.id}" style="margin-bottom:12px">${ic('trash',14)} Delete contact</button>`)},
+ async delContact(el){if(!await ask('Delete this contact? It will disappear from checklist steps.'))return;S.contacts=S.contacts.filter(c=>c.id!==el.dataset.id);closeModal();save();render()},
+ async export(){const data=JSON.stringify(S,null,2),fn='everstone-hub-backup-'+TODAY()+'.json';let ok=false;
+  try{const dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;if(dl){await dl.save({filename:fn,data});ok=true}}
+  catch(e){if(e&&e.code==='declined'){toast('Backup not saved');return}toast('Download is not available here');return}
+  if(!ok){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=fn;document.body.appendChild(a);a.click();a.remove();ok=true}catch(e){}}
+  if(ok){S.meta.lastExport=TODAY();save();render();toast('Backup saved')}},
+ async reset(){if(!await ask('This erases every build, listing, client, task and contact.','Erase'))return;if(!await ask('Last check: export a backup first if you might want this data back.','Erase everything'))return;S=seed();save();go('#dashboard');render();toast('Everything erased')}
+};
+const CH={
+ step(el){const b=getB(el.dataset.b);const s=el.dataset.s;if(el.checked){b.checks[s]=true;b.doneAt[s]=TODAY()}else{delete b.checks[s];delete b.doneAt[s]}
+  if(el.checked&&b.status==='Pre-construction'&&['p4','p5','p6'].includes((ALL_STEPS.find(x=>x.id===s)||{}).phaseId))b.status='Under construction';
+  save();render();if(el.checked&&progress(b).pct===1)toast('Every step done — nice work!')},
+ sdate(el){const b=getB(el.dataset.b);if(el.value)b.dates[el.dataset.s]=el.value;else delete b.dates[el.dataset.s];save();render();toast(el.value?'Planned for '+fmt(el.value):'Date cleared')},
+ snote(el){const b=getB(el.dataset.b);const v=el.value.trim();if(v)b.notesBy[el.dataset.s]=v;else delete b.notesBy[el.dataset.s];save();toast('Note saved')},
+ ckBuild(el){go('#checklist/'+el.value)},
+ task(el){const t=S.tasks.find(x=>x.id===el.dataset.id);t.done=el.checked;t.doneAt=el.checked?TODAY():'';save();setTimeout(render,180)},
+ tlink(el){const f=el.form;if(el.value.startsWith('build:'))f.cat.value='EverStone';else if(el.value)f.cat.value='Real Estate'},
+ tx(el){const l=getL(el.dataset.id);if(el.checked)l.tx[el.dataset.k]=TODAY();else delete l.tx[el.dataset.k];
+  if(el.checked&&el.dataset.k==='u1'&&['Active','Coming Soon'].includes(l.status)){l.status='Pending';toast('Status moved to Pending')}
+  if(el.checked&&el.dataset.k==='u10'&&l.status!=='Sold'){l.status='Sold';if(!l.closeDate)l.closeDate=TODAY();if(l.buildId){const b=getB(l.buildId);if(b)b.status='Sold'}toast('Marked Sold 🎉')}
+  const cl=l.clientId&&getCl(l.clientId);if(cl&&el.checked){if(el.dataset.k==='u1'&&cl.stage!=='Closed')cl.stage='Under contract';if(el.dataset.k==='u10'){cl.stage='Closed';cl.closedDate=TODAY()}}
+  save();render()},
+ field(el){const o=el.dataset.type==='build'?getB(el.dataset.id):getL(el.dataset.id);o[el.dataset.k]=el.value;save();toast('Saved')},
+ meta(el){S.meta[el.dataset.k]=el.value;save();render();toast('Saved')},
+ notify(el){const n=notifyCfg();n[el.dataset.k]=el.type==='checkbox'?el.checked:el.dataset.k==='lead'?+el.value:el.value;save();toast('Saved')},
+ cfield(el){const c=getCl(el.dataset.id);c[el.dataset.k]=el.value;save();if(el.dataset.k!=='notes')render();toast('Saved')},
+ clType(el){S.ui.clType=el.value;save();render()},
+ import(el){const file=el.files[0];if(!file)return;const r=new FileReader();r.onload=async()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.builds))throw 0;
+  if(!await ask('Replace everything in the hub with this backup?','Replace'))return;S=migrate(o);save();render();toast('Backup imported')}catch(e){toast('That file isn\'t an EverStone Hub backup')}};r.readAsText(file)}
+};
+document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a&&!e.defaultPrevented){e.preventDefault();go(a.getAttribute('href'))}});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;if(el.tagName==='A')return;e.preventDefault();const f=ACT[el.dataset.act];f&&f(el,e)});
+document.addEventListener('change',e=>{const el=e.target.closest('[data-ch]');if(!el)return;const f=CH[el.dataset.ch];f&&f(el,e)});
+document.addEventListener('submit',e=>{const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();handleForm(f)});
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-form] button:not([type=button])');if(!btn)return;e.preventDefault();const f=btn.closest('[data-form]');if(f.reportValidity&&!f.reportValidity())return;handleForm(f)},true);
+document.addEventListener('keydown',e=>{if(e.key!=='Enter'||e.isComposing)return;const el=e.target;if(el.tagName!=='INPUT')return;const f=el.closest('[data-form]');if(!f)return;e.preventDefault();if(f.reportValidity&&!f.reportValidity())return;handleForm(f)});
+async function connectForm(f){const conn={url:f.elements.url.value.trim().replace(/\/+$/,''),key:f.elements.key.value.trim()};
+ if(!/^(https:\/\/|http:\/\/(localhost|127\.0\.0\.1)[:/])/.test(conn.url+'/')){toast('The Worker address should start with https://');return}
+ let r;try{r=await api('/state',{},conn)}catch(e){toast(/Failed to fetch|NetworkError|Load failed/i.test(e.message)?'Can\'t reach that address — check it and try again':e.message);return}
+ if(r.state&&hasData()){const useCloud=await ask('Your cloud already has data. Use the cloud copy on this device? Choose Cancel to replace the cloud copy with this device\'s data instead.','Use cloud data');
+  CONN=conn;if(useCloud){SYNC.version=r.version;applyRemote(r.state)}else{await push()}}
+ else{CONN=conn;if(r.state){SYNC.version=r.version;applyRemote(r.state)}else{await push()}}
+ try{localStorage.setItem(CONN_KEY,JSON.stringify(conn))}catch(e){}SYNC.state='synced';startSync();render();toast('Connected')}
+function handleForm(f){
+ if(f.dataset.form==='task'){const t={id:uid(),title:f.elements.title.value.trim(),cat:f.elements.cat.value,link:f.elements.link.value,due:f.elements.due.value,time:f.elements.time.value,pri:f.elements.pri.value,done:false,created:TODAY()};if(!t.title)return;S.tasks.unshift(t);save();render();toast('Task added');return}
+ if(f.dataset.form==='connect'){connectForm(f);return}
+ if(f.dataset.form==='log'){const c=getCl(f.dataset.id);const ty=f.elements.type.value,nt=f.elements.note.value.trim();c.log.push({id:uid(),date:TODAY(),type:ty,note:nt});if(ty!=='Note')c.lastContact=TODAY();save();render();toast('Logged');return}
+ if(f.dataset.form==='modal'){const m=$('#modal');const d={};m._fields.forEach(fd=>{let v=f.elements[fd.k].value;if(typeof v==='string')v=v.trim();if(fd.t==='number'&&v!=='')v=+v;d[fd.k]=v});const cb=m._save;closeModal();cb&&cb(d)}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden)closeModal()});
+$('#modal').addEventListener('mousedown',e=>{if(e.target.id==='modal')closeModal()});
+
+/* ================= ROUTER ================= */
+const NAV=[['sec','Overview'],['dashboard','Dashboard','grid'],['sec','EverStone'],['builds','Builds','home'],['checklist','Checklist','check'],['sec','Realtor'],['realtor','Realtor HQ','briefcase'],['clients','Clients','user'],['realestate','Listings & deals','tag'],['sec','Workflow'],['tasks','Tasks','list'],['schedule','Schedule','cal'],['contacts','Contacts','users'],['settings','Settings','gear']];
+let lastHash=null;
+let ROUTE=(location.hash||'').slice(1)||'dashboard';
+function go(h){ROUTE=String(h||'').replace(/^#/,'')||'dashboard';try{if(!ROUTE.includes('/'))history.replaceState(null,'','#'+ROUTE)}catch(e){}render()}
+function render(){const h=ROUTE;const[pg,id]=h.split('/');
+ const over=S.tasks.filter(t=>!t.done&&t.due&&t.due<TODAY()).length;
+ $('#nav').innerHTML=NAV.map(n=>n[0]==='sec'?`<div class="sec">${n[1]}</div>`:`<a href="#${n[0]}" class="${(pg===n[0]||(pg==='build'&&n[0]==='builds')||(pg==='listing'&&n[0]==='realestate')||(pg==='client'&&n[0]==='clients'))?'on':''}">${ic(n[2],18)}<span>${n[1]}</span>${n[0]==='tasks'&&over?`<span class="cnt">${over}</span>`:''}</a>`).join('');
+ const P={dashboard:pgDashboard,builds:pgBuilds,build:()=>pgBuild(id),checklist:()=>pgChecklist(id),realestate:pgRealEstate,listing:()=>pgListing(id),tasks:pgTasks,schedule:pgSchedule,contacts:pgContacts,settings:pgSettings,realtor:pgRealtor,clients:pgClients,client:()=>pgClient(id)};
+ const y=window.scrollY;$('#view').innerHTML=((STORAGE_OK||SYNC.state==='synced')?'':`<div class="banner">${ic('alert',18)}<div class="sp"><b>Changes won't be saved here.</b> This browser is blocking storage. Open the hub in Safari or Chrome, or connect sync in Settings.</div></div>`)+(P[pg]||pgDashboard)();
+ if(lastHash!==h){window.scrollTo(0,0);lastHash=h}else window.scrollTo(0,y);
+ document.title=({dashboard:'Dashboard',builds:'Builds',build:'Build',checklist:'Checklist',realestate:'Listings',listing:'Listing',tasks:'Tasks',schedule:'Schedule',contacts:'Contacts',settings:'Settings',realtor:'Realtor HQ',clients:'Clients',client:'Client'}[pg]||'Dashboard')+' · EverStone Hub'}
+window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1);if(h&&h!==ROUTE){ROUTE=h;render()}});
+window.addEventListener('popstate',()=>{const h=(location.hash||'').slice(1)||'dashboard';if(h!==ROUTE){ROUTE=h;render()}});
+render();
+startSync();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').then(checkPush).catch(()=>{})}
+</script>
+</body>
+</html>
